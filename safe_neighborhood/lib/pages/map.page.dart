@@ -65,65 +65,61 @@ class _MapPageState extends State<MapPage> {
       String name, LatLng loc, String status, String url, String id) async {
     switch (status) {
       case 'offline':
-        return setState(() {
-          final Marker marker = Marker(
-            markerId: MarkerId(id),
-            position: loc,
-            infoWindow: InfoWindow(
-              title: name,
-              snippet: status,
-              onTap: () {},
-            ),
-            icon: offlineIcon,
-          );
-          markers.add(marker);
-        });
+        final Marker marker = Marker(
+          markerId: MarkerId(id),
+          position: loc,
+          infoWindow: InfoWindow(
+            title: name,
+            snippet: status,
+            onTap: () {},
+          ),
+          icon: offlineIcon,
+        );
+        markers.add(marker);
+        break;
       case 'warning':
-        return setState(() {
-          final Marker marker = Marker(
-            markerId: MarkerId(id),
-            position: loc,
-            infoWindow: InfoWindow(
-              title: name,
-              snippet: 'Em Alerta! Central verificando',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CameraPage(
-                      url: url,
-                    ),
+        final Marker marker = Marker(
+          markerId: MarkerId(id),
+          position: loc,
+          infoWindow: InfoWindow(
+            title: name,
+            snippet: 'Em Alerta! Central verificando',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CameraPage(
+                    url: url,
                   ),
-                );
-              },
-            ),
-            icon: warningIcon,
-          );
-          markers.add(marker);
-        });
+                ),
+              );
+            },
+          ),
+          icon: warningIcon,
+        );
+        markers.add(marker);
+        break;
       default:
-        return setState(() {
-          final Marker marker = Marker(
-            markerId: MarkerId(id),
-            position: loc,
-            infoWindow: InfoWindow(
-              title: name,
-              snippet: 'Em Alerta! Central verificando',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CameraPage(
-                      url: url,
-                    ),
+        final Marker marker = Marker(
+          markerId: MarkerId(id),
+          position: loc,
+          infoWindow: InfoWindow(
+            title: name,
+            snippet: 'Em Alerta! Central verificando',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CameraPage(
+                    url: url,
                   ),
-                );
-              },
-            ),
-            icon: onlineIcon,
-          );
-          markers.add(marker);
-        });
+                ),
+              );
+            },
+          ),
+          icon: onlineIcon,
+        );
+        markers.add(marker);
     }
   }
 
