@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:safe_neighborhood/pages/login.dart';
-import 'package:safe_neighborhood/pages/map.page.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 const request = "https://api.npoint.io/67dc7f362a61d92bb6a5";
 
-void main() async{
+void main() async {
   //print(await getData());
   runApp(const MyApp());
 }
@@ -24,11 +23,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MapPage(),
+      home: const Login_page(),
       theme: ThemeData(
           primaryColor: Colors.white,
-          inputDecorationTheme: const InputDecorationTheme(
-          )),
+          inputDecorationTheme: const InputDecorationTheme()),
     );
   }
 }

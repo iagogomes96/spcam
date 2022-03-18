@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
@@ -14,11 +13,8 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
   late final VlcPlayerController _videoPlayerController;
 
-  late bool _isPlaying;
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _videoPlayerController = VlcPlayerController.network(
       widget.url,
@@ -40,7 +36,7 @@ class _CameraPageState extends State<CameraPage> {
         children: [
           VlcPlayer(
             controller: _videoPlayerController,
-            aspectRatio: 4/3,
+            aspectRatio: 4 / 3,
             placeholder: const Center(
               child: CircularProgressIndicator(),
             ),
@@ -50,6 +46,7 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
+  // ignore: unused_element
   Widget _videoController() {
     bool _isPlaying = true;
     return Row(
