@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:safe_neighborhood/components/get_started.dart';
+import 'package:safe_neighborhood/components/splashscreen.dart';
+import 'package:safe_neighborhood/pages/auth_page.dart';
 import 'package:safe_neighborhood/pages/login.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:safe_neighborhood/widgets/loading_page.dart';
 
 const request = "https://api.npoint.io/67dc7f362a61d92bb6a5";
 
@@ -21,12 +25,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const Login_page(),
-      theme: ThemeData(
-          primaryColor: Colors.white,
-          inputDecorationTheme: const InputDecorationTheme()),
+      home: SplashScreen(),
     );
   }
 }
