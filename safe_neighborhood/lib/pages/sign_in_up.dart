@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safe_neighborhood/pages/map.page.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
+import 'package:safe_neighborhood/widgets/auth_check.dart';
 
 class SignPage extends StatefulWidget {
   const SignPage({Key? key}) : super(key: key);
@@ -19,6 +19,7 @@ class _SignPageState extends State<SignPage> {
   final password = TextEditingController();
   final fullname = TextEditingController();
   final phone = TextEditingController();
+  late AuthService auth;
 
   bool isLogin = true;
   late String title;
@@ -59,6 +60,8 @@ class _SignPageState extends State<SignPage> {
     }
     try {
       await context.read<AuthService>().login(email.text, password.text);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const AuthCheck()));
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
@@ -73,6 +76,8 @@ class _SignPageState extends State<SignPage> {
       await context
           .read<AuthService>()
           .register(email.text, password.text, fullname.text, phone.text);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const AuthCheck()));
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
@@ -91,14 +96,14 @@ class _SignPageState extends State<SignPage> {
           ),
           child: Form(
             key: formKey,
-            child: isLogin ? Login() : Register(),
+            child: isLogin ? _login() : register(),
           ),
         ),
       ),
     );
   }
 
-  Widget Login() {
+  Widget _login() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 100),
       child: Column(
@@ -172,8 +177,8 @@ class _SignPageState extends State<SignPage> {
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Informe sua senha!';
-                } else if (value.length < 4) {
-                  return 'Sua senha deve ter ao menos 4 caracteres';
+                } else if (value.length < 6) {
+                  return 'Sua senha deve ter ao menos 6 caracteres';
                 }
                 return null;
               }),
@@ -214,7 +219,7 @@ class _SignPageState extends State<SignPage> {
     );
   }
 
-  Widget Register() {
+  Widget legister() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 100),
       child: Column(
@@ -330,8 +335,8 @@ class _SignPageState extends State<SignPage> {
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Informe sua senha!';
-                } else if (value.length < 4) {
-                  return 'Sua senha deve ter ao menos 4 caracteres';
+                } else if (value.length < 6) {
+                  return 'Sua senha deve ter ao menos 6 caracteres';
                 }
                 return null;
               }),

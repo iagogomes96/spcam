@@ -12,6 +12,7 @@ class AppTheme {
         backgroundColor: AppColors.background,
         textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        scaffoldBackgroundColor: AppColors.background,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             primary: AppColors.primary,

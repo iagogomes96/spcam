@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:safe_neighborhood/data/get_permissions.dart';
 import 'package:safe_neighborhood/pages/sign_in_up.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
-import 'package:device_information/device_information.dart';
 
 class AllowPermissions extends StatefulWidget {
   const AllowPermissions({Key? key}) : super(key: key);
@@ -14,26 +12,6 @@ class AllowPermissions extends StatefulWidget {
 }
 
 class _AllowPermissionsState extends State<AllowPermissions> {
-  String _imeiNo = "";
-
-  Future<void> getIMEI() async {
-    late String imeiNo = '';
-
-    try {
-      imeiNo = await DeviceInformation.deviceIMEINumber;
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _imeiNo = imeiNo;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -53,12 +31,12 @@ class _AllowPermissionsState extends State<AllowPermissions> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: PageView(physics: const NeverScrollableScrollPhysics(), children: [
-        PhonePermissions(),
+        phonePermissions(),
       ]),
     );
   }
 
-  Widget PhonePermissions() {
+  Widget phonePermissions() {
     return Stack(
       children: [
         Padding(
@@ -101,7 +79,6 @@ class _AllowPermissionsState extends State<AllowPermissions> {
                 onPressed: () async {
                   setState(() {
                     PermissionRequest().check_phone_permissions();
-                    getIMEI();
                     checkPermissions();
                   });
                 },

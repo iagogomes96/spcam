@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:safe_neighborhood/components/allow_device.dart';
 import 'package:safe_neighborhood/components/get_started.dart';
-import 'package:safe_neighborhood/pages/map.page.dart';
-import 'package:safe_neighborhood/pages/sign_in_up.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
@@ -22,7 +21,7 @@ class _AuthCheckState extends State<AuthCheck> {
     } else if (auth.usuario == null) {
       return const GetStarted();
     } else {
-      return const MapPage();
+      return const AllowDevice();
     }
   }
 }

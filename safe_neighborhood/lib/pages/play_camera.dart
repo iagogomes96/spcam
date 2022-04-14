@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:safe_neighborhood/pages/alert_page.dart';
+import 'package:safe_neighborhood/theme/app_colors.dart';
 
 class CameraPage extends StatefulWidget {
   final String url;
@@ -29,8 +31,9 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -42,6 +45,19 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const AlertScreen())),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 8,
+        clipBehavior: Clip.hardEdge,
+        child: const Icon(
+          Icons.warning_rounded,
+          color: Colors.white,
+          size: 32,
+        ),
       ),
     );
   }

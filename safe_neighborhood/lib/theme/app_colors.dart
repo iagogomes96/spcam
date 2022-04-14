@@ -6,4 +6,5 @@ class AppColors {
   static const Color textTitle = Color.fromARGB(255, 192, 209, 231);
   static const Color textSubTitle = Color.fromARGB(255, 102, 109, 140);
   static const Color secondaryText = Color.fromARGB(255, 98, 103, 104);
+  static const Color primaryText = Color.fromARGB(255, 170, 199, 236);
 }
