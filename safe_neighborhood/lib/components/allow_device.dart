@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:safe_neighborhood/pages/home_page.dart';
-import 'package:safe_neighborhood/pages/map.page.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
 
 class AllowDevice extends StatefulWidget {
@@ -65,7 +64,7 @@ class _AllowDeviceState extends State<AllowDevice> {
         'status': true,
       });
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const MapPage()));
+          .push(MaterialPageRoute(builder: (context) => const HomePage()));
     } catch (e) {
       null;
     }

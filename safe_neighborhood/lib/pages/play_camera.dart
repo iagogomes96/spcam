@@ -51,8 +51,6 @@ class _CameraPageState extends State<CameraPage> {
             .push(MaterialPageRoute(builder: (context) => const AlertScreen())),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        elevation: 8,
-        clipBehavior: Clip.hardEdge,
         child: const Icon(
           Icons.warning_rounded,
           color: Colors.white,

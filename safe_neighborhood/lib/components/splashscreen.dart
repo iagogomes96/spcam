@@ -1,7 +1,7 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:safe_neighborhood/pages/map.page.dart';
+import 'package:safe_neighborhood/pages/home_page.dart';
 import 'package:video_player/video_player.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
         AnimatedSplashScreen(
           duration: 3000,
           splash: const SizedBox(),
-          nextScreen: const MapPage(),
+          nextScreen: const HomePage(),
           pageTransitionType: PageTransitionType.bottomToTop,
         ),
         SizedBox.expand(

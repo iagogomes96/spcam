@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/theme/app_theme.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
@@ -15,11 +16,22 @@ void main() async {
   await Firebase.initializeApp();
 
   runApp(
-    ListenableProvider(
-      create: ((context) => AuthService()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: ((context) => AuthService())),
+        ChangeNotifierProvider(
+            create: (context) =>
+                FirestoreRepository(auth: context.read<AuthService>())),
+      ],
       child: const MyApp(),
     ),
   );
+}
+
+enum MenuItem {
+  editProfile,
+  settings,
+  logout,
 }
 
 Future<Map> getData() async {

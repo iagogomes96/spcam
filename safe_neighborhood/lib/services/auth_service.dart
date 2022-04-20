@@ -10,11 +10,8 @@ class AuthException implements Exception {
 class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  // ignore: prefer_typing_uninitialized_variables
-  late var uid;
   User? usuario;
   bool isLoading = true;
-  Map<String, dynamic> userData = {};
   AuthService() {
     _authCheck();
   }
@@ -37,21 +34,17 @@ class AuthService extends ChangeNotifier {
 
   register(String email, String password, String fullname, String phone) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      uid = usuario?.uid ?? ''.toString();
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) {
+        if (kDebugMode) {
+          print(value);
+        }
+        createUserData(usuario!.uid, fullname, phone, email);
+      });
       if (kDebugMode) {
-        print('usuario: $uid');
+        print('usuario: ${usuario!.uid}');
       }
-      userData = {
-        'nome completo': fullname,
-        'telefone': phone,
-        'e-mail': email,
-      };
-      if (kDebugMode) {
-        print(userData);
-      }
-      createUserData(userData, uid);
       _getUser();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -81,10 +74,18 @@ class AuthService extends ChangeNotifier {
     _getUser();
   }
 
-  Future<void> createUserData(Map<String, dynamic> userData, String uid) async {
-    if (kDebugMode) {
-      print('dados: $userData, usuario: $uid');
-    }
-    await _db.collection('users').doc(uid).set(userData);
+  createUserData(String uid, String name, String phone, String email) async {
+    await _db
+        .collection('users')
+        .doc(uid)
+        .set({
+          'nome completo': name,
+          'telefone': phone,
+          'e-mail': email,
+        })
+        // ignore: avoid_print
+        .then((value) => print('Success'))
+        // ignore: avoid_print
+        .catchError((onError) => print('Error: $onError'));
   }
 }

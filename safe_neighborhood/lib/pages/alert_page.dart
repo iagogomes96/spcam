@@ -12,24 +12,52 @@ class AlertScreen extends StatefulWidget {
 }
 
 class _AlertScreenState extends State<AlertScreen> {
+  bool validation = true;
+  final _user = 'Fulano';
   final description = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  bool isAnom = false;
+  late String _alert;
   bool value = false;
-  String? selectedItem = 'Item 1';
+  String? selectedItem = 'Tipo de alerta';
   List<String> items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
+    'Tipo de alerta',
+    'Assalto',
+    'Atividade suspeita',
+    'Acidente',
+    'Evento natural/ambiental',
+    'Problemas de iluminação',
+    'Outros',
   ];
+
+  createAlert() {
+    setState(() {
+      if (selectedItem == 'Tipo de alerta') {
+        if (kDebugMode) {
+          print('Selecione o tipo de alerta');
+        }
+        return;
+      } else {
+        String user = value ? 'Anônimo' : _user;
+
+        _alert = '''Alerta : $selectedItem \n
+    \n
+    Descrição: ${description.text}
+    \n
+    Remetente: $user
+    ''';
+        if (kDebugMode) {
+          print(_alert);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: Colors.white,
@@ -138,9 +166,17 @@ class _AlertScreenState extends State<AlertScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          if (kDebugMode) {
-                            print('ALERTA: ${description.text}');
-                          }
+                          setState(() {
+                            createAlert();
+                          });
+                        } else if (selectedItem == 'Tipo de alerta') {
+                          setState(() {
+                            validation = false;
+                          });
+                        } else {
+                          setState(() {
+                            validation = true;
+                          });
                         }
                       },
                       child: const Text('Enviar alerta'),
@@ -190,7 +226,8 @@ class _AlertScreenState extends State<AlertScreen> {
       decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.white, width: 2)),
+          border: Border.all(
+              color: validation ? Colors.white : Colors.red, width: 2)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           borderRadius: BorderRadius.circular(20),
@@ -204,11 +241,18 @@ class _AlertScreenState extends State<AlertScreen> {
                     child: Text(
                       item,
                       style: const TextStyle(
-                          fontSize: 24, color: AppColors.textTitle),
+                          fontSize: 18, color: AppColors.textTitle),
                     ),
                   ))
               .toList(),
-          onChanged: (item) => setState((() => selectedItem = item)),
+          onChanged: (item) => setState(() {
+            selectedItem = item;
+            if (selectedItem == 'Tipo de alerta') {
+              validation = false;
+            } else {
+              validation = true;
+            }
+          }),
         ),
       ),
     );

@@ -20,6 +20,7 @@ class _SignPageState extends State<SignPage> {
   final fullname = TextEditingController();
   final phone = TextEditingController();
   late AuthService auth;
+  Map<String, dynamic> user = {};
 
   bool isLogin = true;
   late String title;
@@ -69,8 +70,13 @@ class _SignPageState extends State<SignPage> {
   }
 
   register() async {
+    user = {
+      'nome completo': fullname,
+      'telefone': phone,
+      'e-mail': email,
+    };
     if (kDebugMode) {
-      print('Cadastro');
+      print(user);
     }
     try {
       await context
@@ -96,7 +102,7 @@ class _SignPageState extends State<SignPage> {
           ),
           child: Form(
             key: formKey,
-            child: isLogin ? _login() : register(),
+            child: isLogin ? _login() : _register(),
           ),
         ),
       ),
@@ -133,12 +139,6 @@ class _SignPageState extends State<SignPage> {
                 hintText: 'E-mail',
                 labelText: 'E-mail',
               ),
-              style: const TextStyle(
-                  color: AppColors.textTitle,
-                  fontSize: 18,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  textBaseline: TextBaseline.alphabetic),
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Informe o e-mail corretamente!';
@@ -219,7 +219,7 @@ class _SignPageState extends State<SignPage> {
     );
   }
 
-  Widget legister() {
+  Widget _register() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 100),
       child: Column(

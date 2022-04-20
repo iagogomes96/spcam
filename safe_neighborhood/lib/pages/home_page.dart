@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:safe_neighborhood/main.dart';
+import 'package:safe_neighborhood/pages/profile.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:safe_neighborhood/pages/play_camera.dart';
+import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -157,26 +159,7 @@ class _HomePageState extends State<HomePage> {
                       return const LoadingPage();
                     default:
                       if (snapshot.hasError) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.error_outline,
-                                size: 100,
-                              ),
-                              Text(
-                                'Erro ao carregar mapa',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                        return const ErrorPage();
                       } else {
                         final Map<String, dynamic> groups =
                             snapshot.data!["cordeiro"];
@@ -228,26 +211,7 @@ class _HomePageState extends State<HomePage> {
                       return const LoadingPage();
                     default:
                       if (snapshot.hasError) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.error_outline,
-                                size: 100,
-                              ),
-                              Text(
-                                'Erro ao carregar mapa',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                        return const ErrorPage();
                       } else {
                         final Map<String, dynamic> groups =
                             snapshot.data!["cordeiro"];
@@ -359,8 +323,39 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-            child: topMenu(),
+            padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+            child: Stack(
+              children: [
+                topMenu(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 50),
+                    child: TextField(
+                      maxLines: 1,
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                          color: AppColors.primary, fontSize: 12),
+                      decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          hintText: 'Buscar: câmeras e endereços',
+                          hintStyle: TextStyle(
+                              color: AppColors.background.withOpacity(0.6),
+                              fontSize: 12),
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 0),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.white.withOpacity(0.6)),
+                              borderRadius: BorderRadius.circular(45))),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ]),
       ),
@@ -368,8 +363,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget topMenu() {
-    return SizedBox(
+    return Expanded(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             decoration: const ShapeDecoration(
@@ -404,35 +401,14 @@ class _HomePageState extends State<HomePage> {
               iconSize: 32,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SizedBox(
-              width: 220,
-              child: TextField(
-                textAlign: TextAlign.start,
-                style: const TextStyle(color: AppColors.primary, fontSize: 12),
-                decoration: InputDecoration(
-                    hintText: 'Buscar: câmeras e endereços',
-                    hintStyle: TextStyle(
-                        color: AppColors.background.withOpacity(0.6),
-                        fontSize: 12),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                    border: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.white.withOpacity(0.6)),
-                        borderRadius: BorderRadius.circular(45))),
-              ),
-            ),
-          ),
           Container(
             decoration: const ShapeDecoration(
                 shape: CircleBorder(), color: Colors.white),
             child: IconButton(
               icon: const Icon(Icons.person_sharp),
-              onPressed: () {},
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              ),
               iconSize: 32,
               color: AppColors.primary,
             ),
