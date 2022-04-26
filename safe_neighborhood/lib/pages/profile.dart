@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/main.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
-import 'package:safe_neighborhood/widgets/auth_check.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 
 import '../theme/app_colors.dart';
@@ -18,8 +17,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late bool _enabled = false;
-  late Map<String, dynamic> _user;
+  final formKey = GlobalKey<FormState>();
+  late bool isEdit = false;
+  late bool isEnabled = false;
+  late Map<dynamic, dynamic> _user;
   final String profileAsset = 'assets/images/profile.png';
   final _namecontroller = TextEditingController();
   final _emailcontroller = TextEditingController();
@@ -28,21 +29,13 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    getUserData();
   }
 
   Future<Map> getUserData() async {
-    try {
-      context.read<FirestoreRepository>().getUserData();
-      _user = context.read<FirestoreRepository>().user;
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    setState(() {
-      _user;
-    });
+    await context
+        .read<FirestoreRepository>()
+        .getUser()
+        .then((value) => _user = value);
     return _user;
   }
 
@@ -50,7 +43,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _editProfile(),
+        onPressed: () => _logout().then(
+          (value) => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => const MyApp())),
+        ),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         child: const Icon(
@@ -74,7 +70,10 @@ class _ProfilePageState extends State<ProfilePage> {
               onSelected: (value) {
                 switch (value) {
                   case MenuItem.logout:
-                    _logout();
+                    _logout().then(
+                      (value) => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MyApp())),
+                    );
                     break;
                   case MenuItem.editProfile:
                     _editProfile();
@@ -120,7 +119,32 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (snapshot.hasError) {
                   return const ErrorPage();
                 } else {
-                  return editUserInfo();
+                  return Container(
+                    alignment: Alignment.topCenter,
+                    margin: const EdgeInsets.all(50),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 120,
+                            width: 120,
+                            decoration: const ShapeDecoration(
+                                shape: CircleBorder(), color: Colors.white),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
+                              child: Image.asset(profileAsset),
+                            ),
+                          ),
+                          Form(
+                            key: formKey,
+                            child: editUserInfo(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
             }
           }),
@@ -128,79 +152,132 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget editUserInfo() {
-    return SingleChildScrollView(
+    return Container(
+      padding: const EdgeInsets.only(top: 50),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: Container(
-              height: 120,
-              width: 120,
-              decoration: const ShapeDecoration(
-                  shape: CircleBorder(), color: Colors.white),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
-                child: Image.asset(profileAsset),
+          SizedBox(
+            child: TextFormField(
+              style: const TextStyle(color: AppColors.textTitle),
+              decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                labelText: 'nome completo',
+                labelStyle: const TextStyle(
+                    color: AppColors.textTitle, fontWeight: FontWeight.bold),
+                hintText: _user['nome completo'],
+                hintStyle: const TextStyle(color: AppColors.textSubTitle),
               ),
+              controller: _namecontroller,
+              enabled: isEdit,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Campo obrigatório!';
+                }
+                return null;
+              },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 50),
-            child: Column(children: [
-              SizedBox(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    alignLabelWithHint: true,
-                    labelText:
-                        _enabled ? 'Nome completo' : _user['nome completo'],
-                    labelStyle: const TextStyle(color: AppColors.textTitle),
-                    hintText: _user['nome completo'],
-                    hintStyle: const TextStyle(color: AppColors.textSubTitle),
-                  ),
-                  controller: _namecontroller,
-                  enabled: _enabled,
-                ),
+          SizedBox(
+            child: TextFormField(
+              style: const TextStyle(color: AppColors.textTitle),
+              decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                labelText: 'e-mail',
+                labelStyle: const TextStyle(
+                    color: AppColors.textTitle, fontWeight: FontWeight.bold),
+                hintText: _user['e-mail'],
+                hintStyle: const TextStyle(color: AppColors.textSubTitle),
               ),
-              SizedBox(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    alignLabelWithHint: true,
-                    labelText: _enabled ? 'E-mail' : _user['e-mail'],
-                    labelStyle: const TextStyle(color: AppColors.textTitle),
-                    hintText: _user['e-mail'],
-                    hintStyle: const TextStyle(color: AppColors.textSubTitle),
-                  ),
-                  controller: _emailcontroller,
-                  enabled: _enabled,
-                ),
-              ),
-              SizedBox(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    alignLabelWithHint: true,
-                    labelText: _enabled ? 'Telefone' : _user['telefone'],
-                    labelStyle: const TextStyle(color: AppColors.textTitle),
-                    hintText: _user['telefone'],
-                    hintStyle: const TextStyle(color: AppColors.textSubTitle),
-                  ),
-                  controller: _phonecontroller,
-                  enabled: _enabled,
-                ),
-              ),
-            ]),
+              controller: _emailcontroller,
+              enabled: isEdit,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Campo obrigatório!';
+                }
+                return null;
+              },
+            ),
           ),
+          SizedBox(
+            child: TextFormField(
+              style: const TextStyle(color: AppColors.textTitle),
+              decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                labelText: 'telefone',
+                labelStyle: const TextStyle(
+                    color: AppColors.textTitle, fontWeight: FontWeight.bold),
+                hintText: _user['telefone'],
+                hintStyle: const TextStyle(color: AppColors.textSubTitle),
+              ),
+              controller: _phonecontroller,
+              enabled: isEdit,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Campo obrigatório!';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 50,
+          ),
+          isEdit ? editProfile() : Container(),
         ],
       ),
     );
   }
 
-  _logout() async {
+  Widget editProfile() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        SizedBox(
+          width: 100,
+          child: ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                _editUser({
+                  'nome completo': _namecontroller.text,
+                  'telefone': _phonecontroller.text,
+                  'e-mail': _emailcontroller.text,
+                });
+                setState(() {
+                  isEdit = false;
+                });
+              }
+            },
+            child: Text('Editar'.toUpperCase()),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              isEdit = false;
+            });
+          },
+          child: Text('Cancelar'.toUpperCase()),
+        ),
+      ],
+    );
+  }
+
+  _editUser(Map<String, dynamic> userData) async {
     try {
+      await context.read<FirestoreRepository>().editUserData(userData);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  Future<void> _logout() async {
+    try {
+      await context.read<FirestoreRepository>().logoutRequest();
       await context.read<AuthService>().logout();
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const AuthCheck()));
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -210,7 +287,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _editProfile() {
     setState(() {
-      _enabled = !_enabled;
+      isEdit = !isEdit;
+      _namecontroller.text = _user['nome completo'];
+      _emailcontroller.text = _user['e-mail'];
+      _phonecontroller.text = _user['telefone'];
     });
+    if (kDebugMode) {
+      print('nome: $_namecontroller');
+      print('e-mail: $_emailcontroller');
+      print('telefone: $_phonecontroller');
+    }
   }
 }

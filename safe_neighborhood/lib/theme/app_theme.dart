@@ -25,29 +25,35 @@ class AppTheme {
             ),
           ),
         ),
-        inputDecorationTheme: const InputDecorationTheme(
-          hintStyle: TextStyle(
+        inputDecorationTheme: InputDecorationTheme(
+          fillColor: Colors.white,
+          hintStyle: const TextStyle(
             color: AppColors.textTitle,
             fontSize: 18,
             fontStyle: FontStyle.normal,
             fontWeight: FontWeight.w500,
           ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: AppColors.textTitle, width: 1),
+          enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.textTitle, width: 2),
+          ),
+          disabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+                color: AppColors.textTitle.withOpacity(0.7), width: 1),
           ),
         ),
         colorScheme: const ColorScheme(
-            brightness: Brightness.dark,
-            primary: AppColors.textTitle,
-            onPrimary: AppColors.secondaryText,
-            secondary: Colors.yellow,
-            onSecondary: Colors.yellow,
-            error: Colors.red,
-            onError: Colors.red,
-            background: AppColors.background,
-            onBackground: AppColors.background,
-            surface: AppColors.textTitle,
-            onSurface: AppColors.textTitle),
+          brightness: Brightness.dark,
+          primary: AppColors.textTitle,
+          onPrimary: AppColors.secondaryText,
+          secondary: Colors.yellow,
+          onSecondary: Colors.yellow,
+          error: Colors.red,
+          onError: Colors.red,
+          background: AppColors.textTitle,
+          onBackground: AppColors.textTitle,
+          surface: AppColors.textTitle,
+          onSurface: AppColors.textTitle,
+        ),
         snackBarTheme: const SnackBarThemeData(
           backgroundColor: AppColors.primary,
           contentTextStyle: TextStyle(

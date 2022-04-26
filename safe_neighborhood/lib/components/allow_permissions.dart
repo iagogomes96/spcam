@@ -12,28 +12,40 @@ class AllowPermissions extends StatefulWidget {
 }
 
 class _AllowPermissionsState extends State<AllowPermissions> {
+  bool permissions = false;
+  Future<void> checkPermissions() async {
+    var phoneStatus = await Permission.phone.status;
+    if (phoneStatus.isGranted) {
+      setState(() {
+        permissions = true;
+      });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const SignPage(),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     checkPermissions();
   }
 
-  Future<void> checkPermissions() async {
-    var phoneStatus = await Permission.phone.status;
-    if (phoneStatus.isGranted) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const SignPage()));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: PageView(physics: const NeverScrollableScrollPhysics(), children: [
-        phonePermissions(),
-      ]),
-    );
+    if (permissions) {
+      return const SignPage();
+    } else {
+      return Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        body:
+            PageView(physics: const NeverScrollableScrollPhysics(), children: [
+          phonePermissions(),
+        ]),
+      );
+    }
   }
 
   Widget phonePermissions() {
@@ -78,7 +90,13 @@ class _AllowPermissionsState extends State<AllowPermissions> {
               ElevatedButton(
                 onPressed: () async {
                   setState(() {
-                    PermissionRequest().check_phone_permissions();
+                    PermissionRequest().check_phone_permissions().then(
+                          (value) => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const SignPage(),
+                            ),
+                          ),
+                        );
                     checkPermissions();
                   });
                 },

@@ -38,9 +38,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     getData().then((map) {
-      if (kDebugMode) {
-        //print(map);
-      }
+      if (kDebugMode) {}
     });
     rootBundle.loadString('assets/mapstyle.txt').then((string) {
       _mapStyle = string;
@@ -363,58 +361,58 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget topMenu() {
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: CircleBorder(),
-            ),
-            child: IconButton(
-              color: AppColors.primary,
-              onPressed: () {
-                setState(() {
-                  _isMap = !_isMap;
-                });
-                if (_isMap) {
-                  if (kDebugMode) {
-                    print('Tela de mapa');
-                    pageController.previousPage(
-                        duration: const Duration(milliseconds: 10),
-                        curve: Curves.easeIn);
-                  }
-                } else {
-                  if (kDebugMode) {
-                    print('Tela de lista');
-                    pageController.nextPage(
-                        duration: const Duration(milliseconds: 10),
-                        curve: Curves.easeIn);
-                  }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          decoration: const ShapeDecoration(
+            color: Colors.white,
+            shape: CircleBorder(),
+          ),
+          child: IconButton(
+            color: AppColors.primary,
+            onPressed: () {
+              setState(() {
+                _isMap = !_isMap;
+              });
+              if (_isMap) {
+                if (kDebugMode) {
+                  print('Tela de mapa');
+                  pageController.previousPage(
+                      duration: const Duration(milliseconds: 10),
+                      curve: Curves.easeIn);
                 }
-              },
-              icon: !_isMap
-                  ? const Icon(Icons.map_rounded)
-                  : const Icon(Icons.list_rounded),
-              iconSize: 32,
-            ),
+              } else {
+                if (kDebugMode) {
+                  print('Tela de lista');
+                  pageController.nextPage(
+                      duration: const Duration(milliseconds: 10),
+                      curve: Curves.easeIn);
+                }
+              }
+            },
+            icon: !_isMap
+                ? const Icon(Icons.map_rounded)
+                : const Icon(Icons.list_rounded),
+            iconSize: 32,
           ),
-          Container(
-            decoration: const ShapeDecoration(
-                shape: CircleBorder(), color: Colors.white),
-            child: IconButton(
-              icon: const Icon(Icons.person_sharp),
-              onPressed: () => Navigator.of(context).push(
+        ),
+        Container(
+          decoration:
+              const ShapeDecoration(shape: CircleBorder(), color: Colors.white),
+          child: IconButton(
+            icon: const Icon(Icons.person_sharp),
+            onPressed: () {
+              Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const ProfilePage()),
-              ),
-              iconSize: 32,
-              color: AppColors.primary,
-            ),
+              );
+            },
+            iconSize: 32,
+            color: AppColors.primary,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

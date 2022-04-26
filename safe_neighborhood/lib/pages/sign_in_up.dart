@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:safe_neighborhood/components/allow_device.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
@@ -55,35 +56,25 @@ class _SignPageState extends State<SignPage> {
     });
   }
 
-  login() async {
-    if (kDebugMode) {
-      print('Login');
-    }
+  Future<void> login() async {
     try {
       await context.read<AuthService>().login(email.text, password.text);
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const AuthCheck()));
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
-  register() async {
+  Future<void> register() async {
     user = {
       'nome completo': fullname,
       'telefone': phone,
       'e-mail': email,
     };
-    if (kDebugMode) {
-      print(user);
-    }
     try {
       await context
           .read<AuthService>()
           .register(email.text, password.text, fullname.text, phone.text);
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const AuthCheck()));
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
@@ -93,7 +84,6 @@ class _SignPageState extends State<SignPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -135,6 +125,12 @@ class _SignPageState extends State<SignPage> {
               controller: email,
               textAlign: TextAlign.start,
               keyboardType: TextInputType.emailAddress,
+              style: const TextStyle(
+                  color: AppColors.textTitle,
+                  fontSize: 18,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  textBaseline: TextBaseline.alphabetic),
               decoration: const InputDecoration(
                 hintText: 'E-mail',
                 labelText: 'E-mail',
@@ -196,7 +192,13 @@ class _SignPageState extends State<SignPage> {
               onPressed: () {
                 if (formKey.currentState!.validate()) {
                   if (isLogin) {
-                    login();
+                    login().then(
+                      (value) => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AuthCheck(),
+                        ),
+                      ),
+                    );
                   }
                 }
               },
@@ -346,7 +348,13 @@ class _SignPageState extends State<SignPage> {
               onPressed: () {
                 if (formKey.currentState!.validate()) {
                   if (!isLogin) {
-                    register();
+                    register().then(
+                      (value) => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AllowDevice(),
+                        ),
+                      ),
+                    );
                   }
                 }
               },

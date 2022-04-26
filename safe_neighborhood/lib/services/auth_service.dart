@@ -82,6 +82,8 @@ class AuthService extends ChangeNotifier {
           'nome completo': name,
           'telefone': phone,
           'e-mail': email,
+          'device': '',
+          'status': true,
         })
         // ignore: avoid_print
         .then((value) => print('Success'))
