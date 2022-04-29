@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
 
 class AlertScreen extends StatefulWidget {
-  const AlertScreen({Key? key}) : super(key: key);
+  final String device;
+  const AlertScreen({Key? key, required this.device}) : super(key: key);
 
   @override
   State<AlertScreen> createState() => _AlertScreenState();
@@ -13,10 +16,8 @@ class AlertScreen extends StatefulWidget {
 
 class _AlertScreenState extends State<AlertScreen> {
   bool validation = true;
-  final _user = 'Fulano';
   final description = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  late String _alert;
   bool value = false;
   String? selectedItem = 'Tipo de alerta';
   List<String> items = [
@@ -29,27 +30,15 @@ class _AlertScreenState extends State<AlertScreen> {
     'Outros',
   ];
 
-  createAlert() {
-    setState(() {
-      if (selectedItem == 'Tipo de alerta') {
-        if (kDebugMode) {
-          print('Selecione o tipo de alerta');
-        }
-        return;
-      } else {
-        String user = value ? 'Anônimo' : _user;
-
-        _alert = '''Alerta : $selectedItem \n
-    \n
-    Descrição: ${description.text}
-    \n
-    Remetente: $user
-    ''';
-        if (kDebugMode) {
-          print(_alert);
-        }
-      }
-    });
+  Future<bool> createAlert() async {
+    try {
+      await context
+          .read<FirestoreRepository>()
+          .createAlert(description.text, selectedItem!, widget.device, value);
+    } on Exception catch (e) {
+      print(e);
+    }
+    return true;
   }
 
   @override
@@ -166,9 +155,73 @@ class _AlertScreenState extends State<AlertScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          setState(() {
-                            createAlert();
-                          });
+                          if (selectedItem == 'Tipo de alerta') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Selecione o tipo de alerta')));
+
+                            return;
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                backgroundColor: Colors.white,
+                                titleTextStyle: const TextStyle(
+                                    color: AppColors.background,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                                title: const Text(
+                                  'Atenção',
+                                  textAlign: TextAlign.start,
+                                ),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: const [
+                                      Text(
+                                        'A criação deste alerta não descarta a necessidade de contato com a polícia militar.',
+                                      ),
+                                      Text(
+                                        'Em caso de emergência, ligue 190.',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                contentTextStyle: const TextStyle(
+                                    color: AppColors.background, fontSize: 16),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                actionsPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 10),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'Cancel'),
+                                    child: const Text(
+                                      'Cancelar',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: AppColors.secondaryText),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => createAlert().then(
+                                        (value) =>
+                                            {Navigator.pop(context, 'Send')}),
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                              ),
+                            );
+                          }
                         } else if (selectedItem == 'Tipo de alerta') {
                           setState(() {
                             validation = false;

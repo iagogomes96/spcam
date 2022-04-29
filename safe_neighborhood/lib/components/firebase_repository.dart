@@ -7,6 +7,7 @@ class FirestoreRepository extends ChangeNotifier {
   late FirebaseFirestore db = FirebaseFirestore.instance;
   late Map<String, dynamic> allowedDevice = {};
   late AuthService auth;
+  late Map<String, dynamic> alertBody = {};
 
   FirestoreRepository({required this.auth}) {
     _readData();
@@ -23,6 +24,10 @@ class FirestoreRepository extends ChangeNotifier {
       };
       notifyListeners();
     }
+  }
+
+  Stream<QuerySnapshot> readWhitelist() {
+    return db.collection('whitelist').snapshots();
   }
 
   _readDevice() async {
@@ -82,6 +87,39 @@ class FirestoreRepository extends ChangeNotifier {
               // ignore: avoid_print
               (onError) => print('Error ao associar dispositivo: $onError'));
     }
+  }
+
+  createAlert(
+      String description, String type, String device, bool anonymous) async {
+    if (anonymous) {
+      alertBody = {
+        'user': 'Usuário anônimo',
+        'description': description,
+        'type': type,
+        'device': device
+      };
+    } else {
+      alertBody = {
+        'user': user['nome completo'],
+        'description': description,
+        'type': type,
+        'device': device
+      };
+    }
+    await db
+        .collection('cameras')
+        .doc(device)
+        .collection('alerts')
+        .doc()
+        .set(alertBody);
+  }
+
+  Stream<QuerySnapshot> getAlerts(String device) {
+    return db
+        .collection('cameras')
+        .doc(device)
+        .collection('alerts')
+        .snapshots();
   }
 
   logoutRequest() {

@@ -32,7 +32,8 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
-  register(String email, String password, String fullname, String phone) async {
+  Future register(
+      String email, String password, String fullname, String phone) async {
     try {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
@@ -55,7 +56,7 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  login(String email, String password) async {
+  Future login(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _getUser();
@@ -69,7 +70,7 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  logout() async {
+  Future logout() async {
     await _auth.signOut();
     _getUser();
   }

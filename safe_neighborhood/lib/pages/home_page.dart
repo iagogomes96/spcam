@@ -95,6 +95,8 @@ class _HomePageState extends State<HomePage> {
                 MaterialPageRoute(
                   builder: (context) => CameraPage(
                     url: url,
+                    name: name,
+                    status: status,
                   ),
                 ),
               );
@@ -117,6 +119,8 @@ class _HomePageState extends State<HomePage> {
                 MaterialPageRoute(
                   builder: (context) => CameraPage(
                     url: url,
+                    name: name,
+                    status: status,
                   ),
                 ),
               );
@@ -164,26 +168,14 @@ class _HomePageState extends State<HomePage> {
                         final List<String> name = [];
                         final List<LatLng> cameraPos = [];
                         final List<String> rtsp = [];
-                        List<String> camStatus = [
-                          'online',
-                          'offline',
-                          'online',
-                          'online',
-                          'online',
-                          'offline',
-                          'warning',
-                          'online',
-                          'online',
-                          'online',
-                          'online',
-                          'online'
-                        ];
+                        final List<String> camStatus = [];
                         for (int i = 1; i <= (groups.length - 1); i++) {
                           name.add(groups[i.toString()]['title']);
                           cameraPos.add(
                             LatLng(groups[i.toString()]['latlng'][0],
                                 groups[i.toString()]['latlng'][1]),
                           );
+                          camStatus.add(groups[i.toString()]['status']);
                           rtsp.add(groups[i.toString()]['url']);
                           _setMarkers(name[i - 1], cameraPos[i - 1],
                               camStatus[i - 1], rtsp[i - 1], i.toString());
@@ -216,26 +208,14 @@ class _HomePageState extends State<HomePage> {
                         final List<String> name = [];
                         final List<LatLng> cameraPos = [];
                         final List<String> rtsp = [];
-                        List<String> camStatus = [
-                          'online',
-                          'offline',
-                          'online',
-                          'online',
-                          'online',
-                          'offline',
-                          'warning',
-                          'online',
-                          'online',
-                          'online',
-                          'online',
-                          'online'
-                        ];
+                        final List<String> camStatus = [];
                         for (int i = 1; i <= (groups.length - 1); i++) {
                           name.add(groups[i.toString()]['title']);
                           cameraPos.add(
                             LatLng(groups[i.toString()]['latlng'][0],
                                 groups[i.toString()]['latlng'][1]),
                           );
+                          camStatus.add(groups[i.toString()]['status']);
                           rtsp.add(groups[i.toString()]['url']);
                           _setMarkers(name[i - 1], cameraPos[i - 1],
                               camStatus[i - 1], rtsp[i - 1], i.toString());
@@ -264,6 +244,8 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                           builder: (context) => CameraPage(
                                             url: rtsp[index],
+                                            name: name[index],
+                                            status: camStatus[index],
                                           ),
                                         ),
                                       );

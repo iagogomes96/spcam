@@ -5,8 +5,12 @@ import 'package:safe_neighborhood/theme/app_colors.dart';
 
 class CameraPage extends StatefulWidget {
   final String url;
+  final String name;
+  final String status;
 
-  const CameraPage({Key? key, required this.url}) : super(key: key);
+  const CameraPage(
+      {Key? key, required this.url, required this.name, required this.status})
+      : super(key: key);
 
   @override
   State<CameraPage> createState() => _CameraPageState();
@@ -14,7 +18,9 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   late final VlcPlayerController _videoPlayerController;
-
+  late String url = widget.url;
+  late String name = widget.name;
+  late String status = widget.status;
   @override
   void initState() {
     super.initState();
@@ -32,45 +38,62 @@ class _CameraPageState extends State<CameraPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          VlcPlayer(
-            controller: _videoPlayerController,
-            aspectRatio: 4 / 3,
-            placeholder: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        ],
+        title: Text(name),
+        titleTextStyle: const TextStyle(
+            color: AppColors.textTitle,
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const AlertScreen())),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => AlertScreen(
+                  device: name,
+                ))),
+        backgroundColor: AppColors.primary.withOpacity(0.2),
         child: const Icon(
-          Icons.warning_rounded,
-          color: Colors.white,
-          size: 32,
+          Icons.warning_amber_rounded,
+          color: AppColors.primaryText,
+          size: 40,
+        ),
+      ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            VlcPlayer(
+              controller: _videoPlayerController,
+              aspectRatio: 4 / 3,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              status,
+              style:
+                  const TextStyle(color: AppColors.secondaryText, fontSize: 16),
+            ),
+          ],
         ),
       ),
     );
   }
 
   // ignore: unused_element
-  Widget _videoController() {
+  Widget videoController() {
     bool _isPlaying = true;
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
           onPressed: () {},
           child: const Icon(
             Icons.fast_rewind,
             size: 28,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         TextButton(
@@ -90,7 +113,7 @@ class _CameraPageState extends State<CameraPage> {
           child: Icon(
             _isPlaying ? Icons.pause : Icons.play_arrow,
             size: 28,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         TextButton(
@@ -98,7 +121,7 @@ class _CameraPageState extends State<CameraPage> {
           child: const Icon(
             Icons.fast_forward,
             size: 28,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ],
