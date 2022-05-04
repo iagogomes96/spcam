@@ -190,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 hintStyle: const TextStyle(color: AppColors.textSubTitle),
               ),
               controller: _emailcontroller,
-              enabled: isEdit,
+              enabled: false,
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Campo obrigatório!';
@@ -267,9 +267,12 @@ class _ProfilePageState extends State<ProfilePage> {
   _editUser(Map<String, dynamic> userData) async {
     try {
       await context.read<FirestoreRepository>().editUserData(userData);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Perfil editado com sucesso')));
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }

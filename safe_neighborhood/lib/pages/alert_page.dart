@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +34,11 @@ class _AlertScreenState extends State<AlertScreen> {
       await context
           .read<FirestoreRepository>()
           .createAlert(description.text, selectedItem!, widget.device, value);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Alerta enviado')));
     } on Exception catch (e) {
-      print(e);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
     }
     return true;
   }
@@ -205,9 +207,10 @@ class _AlertScreenState extends State<AlertScreen> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () => createAlert().then(
-                                        (value) =>
-                                            {Navigator.pop(context, 'Send')}),
+                                    onPressed: () => {
+                                      createAlert().then((value) =>
+                                          {Navigator.pop(context, 'Send')})
+                                    },
                                     child: const Text(
                                       'OK',
                                       style: TextStyle(

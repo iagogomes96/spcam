@@ -96,14 +96,16 @@ class FirestoreRepository extends ChangeNotifier {
         'user': 'Usuário anônimo',
         'description': description,
         'type': type,
-        'device': device
+        'device': device,
+        'value': true
       };
     } else {
       alertBody = {
         'user': user['nome completo'],
         'description': description,
         'type': type,
-        'device': device
+        'device': device,
+        'value': true
       };
     }
     await db

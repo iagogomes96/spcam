@@ -1,15 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:provider/provider.dart';
 import 'package:safe_neighborhood/pages/alert_page.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
+import 'package:safe_neighborhood/widgets/loading_error_page.dart';
+import 'package:safe_neighborhood/widgets/loading_page.dart';
+
+import '../components/firebase_repository.dart';
 
 class CameraPage extends StatefulWidget {
   final String url;
   final String name;
   final String status;
+  final String address;
 
   const CameraPage(
-      {Key? key, required this.url, required this.name, required this.status})
+      {Key? key,
+      required this.url,
+      required this.name,
+      required this.status,
+      required this.address})
       : super(key: key);
 
   @override
@@ -21,17 +33,30 @@ class _CameraPageState extends State<CameraPage> {
   late String url = widget.url;
   late String name = widget.name;
   late String status = widget.status;
+  late String address = widget.address;
+  bool showAlert = false;
+  List<String> alertList = [];
+  Stream<QuerySnapshot> _getAuth() {
+    return context.read<FirestoreRepository>().getAlerts(name);
+  }
+
   @override
   void initState() {
     super.initState();
     _videoPlayerController = VlcPlayerController.network(
-      widget.url,
+      url,
       hwAcc: HwAcc.full,
       autoPlay: true,
       options: VlcPlayerOptions(
         rtp: VlcRtpOptions(['--rtsp-tcp']),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _videoPlayerController.dispose();
   }
 
   @override
@@ -51,7 +76,7 @@ class _CameraPageState extends State<CameraPage> {
             builder: (context) => AlertScreen(
                   device: name,
                 ))),
-        backgroundColor: AppColors.primary.withOpacity(0.2),
+        backgroundColor: AppColors.primary,
         child: const Icon(
           Icons.warning_amber_rounded,
           color: AppColors.primaryText,
@@ -60,25 +85,165 @@ class _CameraPageState extends State<CameraPage> {
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            VlcPlayer(
-              controller: _videoPlayerController,
-              aspectRatio: 4 / 3,
+            Text(
+              address,
+              style:
+                  const TextStyle(color: AppColors.secondaryText, fontSize: 16),
             ),
             const SizedBox(
               height: 20,
             ),
-            Text(
-              status,
-              style:
-                  const TextStyle(color: AppColors.secondaryText, fontSize: 16),
+            VlcPlayer(
+                controller: _videoPlayerController,
+                aspectRatio: 4 / 3,
+                placeholder: const Center(
+                    child: CircularProgressIndicator(
+                  value: 10,
+                  color: Colors.white,
+                ))),
+            const SizedBox(height: 10),
+            Center(
+              child: Container(
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(
+                      color: AppColors.textTitle,
+                      width: 2,
+                      style: BorderStyle.solid),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Alertas'.toUpperCase(),
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textTitle),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    GestureDetector(
+                        onTap: () => setState(() => showAlert = !showAlert),
+                        child: const Icon(Icons.arrow_drop_down)),
+                  ],
+                ),
+              ),
             ),
+            showAlert ? alertTile() : Container(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget alertTile() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 250,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: AppColors.textTitle,
+          width: 2,
+          style: BorderStyle.solid,
+        ),
+      ),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: _getAuth(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return const LoadingPage();
+            default:
+              if (snapshot.hasError) {
+                return const ErrorPage();
+              } else {
+                return listViewbuilder(context, snapshot);
+              }
+          }
+        },
+      ),
+    );
+  }
+
+  Widget listViewbuilder(
+      BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+    if (snapshot.data!.docs.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+              height: 100,
+              width: 100,
+              child: Image.asset('assets/images/clear_list.png')),
+          const Text(
+            'Sem alertas ativos!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
+    }
+    return ListView.builder(
+      itemCount: snapshot.data!.docs.length,
+      itemBuilder: ((context, index) {
+        final DocumentSnapshot doc = snapshot.data!.docs[index];
+        if (doc['value']) {
+          alertList.add(doc['type']);
+          if (kDebugMode) {
+            print('lista: $alertList');
+          }
+          return Card(
+            color: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: ListTile(
+              enabled: false,
+              leading: const Icon(
+                Icons.warning_rounded,
+                color: Colors.red,
+                size: 40,
+              ),
+              title: Text(
+                doc['type'].toString(),
+                style: const TextStyle(
+                    color: AppColors.background,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                doc['description'].toString(),
+                style: const TextStyle(
+                  color: AppColors.secondaryText,
+                  fontSize: 14,
+                ),
+              ),
+              trailing: GestureDetector(
+                onTap: () => print('tap ${doc['type']}'),
+                child: const Icon(
+                  Icons.density_medium_rounded,
+                  color: AppColors.background,
+                  size: 18,
+                ),
+              ),
+            ),
+          );
+        } else {
+          alertList.remove(doc['type']);
+        }
+        return Container();
+      }),
     );
   }
 

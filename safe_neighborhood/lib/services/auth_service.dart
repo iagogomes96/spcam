@@ -91,4 +91,8 @@ class AuthService extends ChangeNotifier {
         // ignore: avoid_print
         .catchError((onError) => print('Error: $onError'));
   }
+
+  recoveryPass(String email) {
+    _auth.sendPasswordResetEmail(email: email);
+  }
 }

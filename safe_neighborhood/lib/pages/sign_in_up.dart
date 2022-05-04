@@ -228,7 +228,36 @@ class _SignPageState extends State<SignPage> {
                   return null;
                 }),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                if (email.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.redAccent,
+                      content: Text(
+                        'Insira o e-mail para recuperação',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                } else if (whitelist.contains(email.text)) {
+                  context.read<AuthService>().recoveryPass(email.text);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('E-mail de recuperação enviado.'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.redAccent,
+                      content: Text(
+                        'Insira um e-mail válido',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                }
+              },
               child: const Text(
                 'Esqueci minha senha!',
                 textAlign: TextAlign.start,

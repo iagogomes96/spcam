@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:safe_neighborhood/main.dart';
 import 'package:safe_neighborhood/pages/profile.dart';
@@ -32,14 +31,21 @@ class _HomePageState extends State<HomePage> {
   late BitmapDescriptor warningIcon;
   late BitmapDescriptor iconstatus;
   bool _isMap = true;
+  late String filterText = '';
+  late Map<dynamic, dynamic> mapData = {};
+
+  Future<Map> _getData() async {
+    if (mapData.isEmpty) {
+      await getData().then((value) => setState(() => mapData = value));
+      return mapData;
+    }
+    return mapData;
+  }
 
   @override
   void initState() {
     super.initState();
 
-    getData().then((map) {
-      if (kDebugMode) {}
-    });
     rootBundle.loadString('assets/mapstyle.txt').then((string) {
       _mapStyle = string;
     });
@@ -66,69 +72,43 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _setMarkers(
-      String name, LatLng loc, String status, String url, String id) async {
-    switch (status) {
-      case 'offline':
-        final Marker marker = Marker(
-          markerId: MarkerId(id),
-          position: loc,
-          infoWindow: InfoWindow(
-            title: name,
-            snippet: status,
-            onTap: () {},
-          ),
-          icon: offlineIcon,
-        );
-        markers.add(marker);
-        break;
-      case 'warning':
-        final Marker marker = Marker(
-          markerId: MarkerId(id),
-          position: loc,
-          infoWindow: InfoWindow(
-            title: name,
-            snippet: 'Em Alerta! Central verificando',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CameraPage(
-                    url: url,
-                    name: name,
-                    status: status,
-                  ),
-                ),
-              );
-            },
-          ),
-          icon: warningIcon,
-        );
-        markers.add(marker);
-        break;
-      default:
-        final Marker marker = Marker(
-          markerId: MarkerId(id),
-          position: loc,
-          infoWindow: InfoWindow(
-            title: name,
-            snippet: 'Câmera operando normalmente',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CameraPage(
-                    url: url,
-                    name: name,
-                    status: status,
-                  ),
-                ),
-              );
-            },
-          ),
-          icon: onlineIcon,
-        );
-        markers.add(marker);
+  void _setMarkers(String name, LatLng loc, String status, String url,
+      String id, String address) async {
+    if (status == 'offline') {
+      final Marker marker = Marker(
+        markerId: MarkerId(id),
+        position: loc,
+        infoWindow: InfoWindow(
+          title: name,
+          snippet: status,
+          onTap: () {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Câmera offline')));
+          },
+        ),
+        icon: offlineIcon,
+      );
+      markers.add(marker);
+    } else {
+      final Marker marker = Marker(
+        markerId: MarkerId(id),
+        position: loc,
+        infoWindow: InfoWindow(
+          title: name,
+          snippet: status,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CameraPage(
+                    url: url, name: name, status: status, address: address),
+              ),
+            );
+          },
+        ),
+        icon: onlineIcon,
+      );
+      markers.add(marker);
     }
   }
 
@@ -148,178 +128,168 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: Stack(children: [
-          PageView(
-            controller: pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              FutureBuilder<Map>(
-                future: getData(),
-                builder: ((context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return const LoadingPage();
-                    default:
-                      if (snapshot.hasError) {
-                        return const ErrorPage();
-                      } else {
-                        final Map<String, dynamic> groups =
-                            snapshot.data!["cordeiro"];
-                        final List<String> name = [];
-                        final List<LatLng> cameraPos = [];
-                        final List<String> rtsp = [];
-                        final List<String> camStatus = [];
-                        for (int i = 1; i <= (groups.length - 1); i++) {
-                          name.add(groups[i.toString()]['title']);
-                          cameraPos.add(
-                            LatLng(groups[i.toString()]['latlng'][0],
-                                groups[i.toString()]['latlng'][1]),
-                          );
-                          camStatus.add(groups[i.toString()]['status']);
-                          rtsp.add(groups[i.toString()]['url']);
-                          _setMarkers(name[i - 1], cameraPos[i - 1],
-                              camStatus[i - 1], rtsp[i - 1], i.toString());
-                        }
-                        return GoogleMap(
-                          onMapCreated: _onMapCreated,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(lat, long),
-                            zoom: 16,
-                          ),
-                          markers: markers,
-                        );
-                      }
-                  }
-                }),
-              ),
-              FutureBuilder<Map>(
-                future: getData(),
-                builder: ((context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return const LoadingPage();
-                    default:
-                      if (snapshot.hasError) {
-                        return const ErrorPage();
-                      } else {
-                        final Map<String, dynamic> groups =
-                            snapshot.data!["cordeiro"];
-                        final List<String> name = [];
-                        final List<LatLng> cameraPos = [];
-                        final List<String> rtsp = [];
-                        final List<String> camStatus = [];
-                        for (int i = 1; i <= (groups.length - 1); i++) {
-                          name.add(groups[i.toString()]['title']);
-                          cameraPos.add(
-                            LatLng(groups[i.toString()]['latlng'][0],
-                                groups[i.toString()]['latlng'][1]),
-                          );
-                          camStatus.add(groups[i.toString()]['status']);
-                          rtsp.add(groups[i.toString()]['url']);
-                          _setMarkers(name[i - 1], cameraPos[i - 1],
-                              camStatus[i - 1], rtsp[i - 1], i.toString());
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 100, 10, 10),
-                          child: ListView.builder(
-                              padding: const EdgeInsets.all(4),
-                              itemCount: groups.length - 1,
-                              itemBuilder: (context, index) {
-                                late String icon;
-                                if (camStatus[index] != 'online') {
-                                  if (camStatus[index] == 'offline') {
-                                    icon = 'assets/images/offline_camera.png';
-                                  } else if (camStatus[index] == 'warning') {
-                                    icon = 'assets/images/warning_camera.png';
-                                  }
-                                } else {
-                                  icon = 'assets/images/online_camera.png';
-                                }
-                                return InkWell(
-                                  onTap: () {
-                                    if (camStatus[index] != 'offline') {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CameraPage(
-                                            url: rtsp[index],
-                                            name: name[index],
-                                            status: camStatus[index],
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                        flex: 1,
-                                        child: Image.asset(
-                                          icon,
-                                          fit: BoxFit.cover,
-                                          height: 50,
-                                        ),
-                                      ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                name[index],
-                                                textAlign: TextAlign.start,
-                                                style: const TextStyle(
-                                                  color: AppColors.textTitle,
-                                                  fontWeight: FontWeight.bold,
+          FutureBuilder<Map>(
+            future: _getData(),
+            builder: ((context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return const LoadingPage();
+                default:
+                  if (snapshot.hasError) {
+                    return const ErrorPage();
+                  } else {
+                    final Map<String, dynamic> groups =
+                        snapshot.data!["cordeiro"];
+                    final List<String> name = [];
+                    final List<LatLng> cameraPos = [];
+                    final List<String> rtsp = [];
+                    final List<String> camStatus = [];
+                    final List<String> address = [];
+                    for (int i = 1; i <= (groups.length - 1); i++) {
+                      address.add(groups[i.toString()]['address']);
+                      name.add(groups[i.toString()]['title']);
+                      cameraPos.add(
+                        LatLng(groups[i.toString()]['latlng'][0],
+                            groups[i.toString()]['latlng'][1]),
+                      );
+                      camStatus.add(groups[i.toString()]['status']);
+                      rtsp.add(groups[i.toString()]['url']);
+                      _setMarkers(
+                          name[i - 1],
+                          cameraPos[i - 1],
+                          camStatus[i - 1],
+                          rtsp[i - 1],
+                          i.toString(),
+                          address[i - 1]);
+                    }
+                    return PageView(
+                      controller: pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _isMap
+                            ? GoogleMap(
+                                onMapCreated: _onMapCreated,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(lat, long),
+                                  zoom: 16,
+                                ),
+                                markers: markers,
+                              )
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 100, 10, 10),
+                                child: ListView.builder(
+                                    padding: const EdgeInsets.all(10),
+                                    itemCount: groups.length - 1,
+                                    itemBuilder: (context, index) {
+                                      late String icon;
+                                      if (camStatus[index] != 'online') {
+                                        icon =
+                                            'assets/images/offline_camera.png';
+                                      } else {
+                                        icon =
+                                            'assets/images/online_camera.png';
+                                      }
+                                      return InkWell(
+                                        onTap: () {
+                                          if (camStatus[index] != 'offline') {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CameraPage(
+                                                        url: rtsp[index],
+                                                        name: name[index],
+                                                        status:
+                                                            camStatus[index],
+                                                        address:
+                                                            address[index]),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                              flex: 1,
+                                              child: Image.asset(
+                                                icon,
+                                                fit: BoxFit.cover,
+                                                height: 48,
+                                              ),
+                                            ),
+                                            Flexible(
+                                              flex: 3,
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      name[index],
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      style: const TextStyle(
+                                                        color:
+                                                            AppColors.textTitle,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      address[index],
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      style: const TextStyle(
+                                                          color: AppColors
+                                                              .textSubTitle,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              Text(
-                                                'Status: ${camStatus[index]}',
-                                                textAlign: TextAlign.start,
-                                                style: const TextStyle(
-                                                    color:
-                                                        AppColors.textSubTitle,
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                        );
-                      }
+                                      );
+                                    }),
+                              ),
+                      ],
+                    );
                   }
-                }),
-              ),
-            ],
+              }
+            }),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
             child: Stack(
               children: [
                 topMenu(),
-                Padding(
+                /*Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 50),
                     child: TextField(
+                      onChanged: (text) {
+                        setState(() {
+                          filterText = text;
+                        });
+                      },
                       maxLines: 1,
                       textAlign: TextAlign.start,
                       style: const TextStyle(
                           color: AppColors.primary, fontSize: 12),
                       decoration: InputDecoration(
+                          disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          hintText: 'Buscar: câmeras e endereços',
+                          hintText: 'Pesquisar',
                           hintStyle: TextStyle(
                               color: AppColors.background.withOpacity(0.6),
                               fontSize: 12),
@@ -333,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(45))),
                     ),
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -359,19 +329,13 @@ class _HomePageState extends State<HomePage> {
                 _isMap = !_isMap;
               });
               if (_isMap) {
-                if (kDebugMode) {
-                  print('Tela de mapa');
-                  pageController.previousPage(
-                      duration: const Duration(milliseconds: 10),
-                      curve: Curves.easeIn);
-                }
+                pageController.previousPage(
+                    duration: const Duration(milliseconds: 10),
+                    curve: Curves.easeIn);
               } else {
-                if (kDebugMode) {
-                  print('Tela de lista');
-                  pageController.nextPage(
-                      duration: const Duration(milliseconds: 10),
-                      curve: Curves.easeIn);
-                }
+                pageController.nextPage(
+                    duration: const Duration(milliseconds: 10),
+                    curve: Curves.easeIn);
               }
             },
             icon: !_isMap

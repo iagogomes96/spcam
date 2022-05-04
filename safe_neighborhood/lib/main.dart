@@ -6,11 +6,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
-import 'package:safe_neighborhood/test/authcode.dart';
 import 'package:safe_neighborhood/theme/app_theme.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
 
-const request = "https://api.npoint.io/67dc7f362a61d92bb6a5";
+const request = "https://api.jsonbin.io/b/626ff23d38be296761fb3211/1";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +48,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SP Cam APP',
       theme: AppTheme(context).defaultTheme,
-      home: const AuthCode(),
+      home: const AuthCheck(),
     );
   }
 }
