@@ -45,7 +45,7 @@ class _CameraPageState extends State<CameraPage> {
     super.initState();
     _videoPlayerController = VlcPlayerController.network(
       url,
-      hwAcc: HwAcc.full,
+      hwAcc: HwAcc.auto,
       autoPlay: true,
       options: VlcPlayerOptions(
         rtp: VlcRtpOptions(['--rtsp-tcp']),
@@ -84,79 +84,75 @@ class _CameraPageState extends State<CameraPage> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+        padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              address,
-              style:
-                  const TextStyle(color: AppColors.secondaryText, fontSize: 16),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            VlcPlayer(
-                controller: _videoPlayerController,
-                aspectRatio: 4 / 3,
-                placeholder: const Center(
-                    child: CircularProgressIndicator(
-                  value: 10,
-                  color: Colors.white,
-                ))),
-            const SizedBox(height: 10),
-            Center(
-              child: Container(
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                      color: AppColors.textTitle,
-                      width: 2,
-                      style: BorderStyle.solid),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Alertas'.toUpperCase(),
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textTitle),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                        onTap: () => setState(() => showAlert = !showAlert),
-                        child: const Icon(Icons.arrow_drop_down)),
-                  ],
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                address,
+                style: const TextStyle(
+                    color: AppColors.secondaryText, fontSize: 16),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              VlcPlayer(
+                  controller: _videoPlayerController,
+                  aspectRatio: 1.47,
+                  placeholder: const Center(
+                      child: CircularProgressIndicator(
+                    value: 10,
+                    color: Colors.white,
+                  ))),
+              const SizedBox(height: 10),
+              Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 3,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                        color: AppColors.textTitle,
+                        width: 2,
+                        style: BorderStyle.solid),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Alertas'.toUpperCase(),
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textTitle),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                          onTap: () => setState(() => showAlert = !showAlert),
+                          child: const Icon(Icons.arrow_drop_down)),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            showAlert ? alertTile() : Container(),
-          ],
+              showAlert ? alertTile() : Container(),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget alertTile() {
-    return Container(
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 2,
       width: MediaQuery.of(context).size.width,
-      height: 250,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: AppColors.textTitle,
-          width: 2,
-          style: BorderStyle.solid,
-        ),
-      ),
       child: StreamBuilder<QuerySnapshot>(
         stream: _getAuth(),
         builder: (context, snapshot) {
@@ -213,20 +209,20 @@ class _CameraPageState extends State<CameraPage> {
               leading: const Icon(
                 Icons.warning_rounded,
                 color: Colors.red,
-                size: 40,
+                size: 38,
               ),
               title: Text(
                 doc['type'].toString(),
                 style: const TextStyle(
                     color: AppColors.background,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 doc['description'].toString(),
                 style: const TextStyle(
                   color: AppColors.secondaryText,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               trailing: GestureDetector(
@@ -234,7 +230,7 @@ class _CameraPageState extends State<CameraPage> {
                 child: const Icon(
                   Icons.density_medium_rounded,
                   color: AppColors.background,
-                  size: 18,
+                  size: 14,
                 ),
               ),
             ),
