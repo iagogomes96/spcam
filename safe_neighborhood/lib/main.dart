@@ -28,7 +28,7 @@ void main() async {
   );
 }
 
-enum MenuItem {
+enum MenuItems {
   editProfile,
   settings,
   logout,

@@ -69,20 +69,20 @@ class _ProfilePageState extends State<ProfilePage> {
           PopupMenuButton(
               onSelected: (value) {
                 switch (value) {
-                  case MenuItem.logout:
+                  case MenuItems.logout:
                     _logout().then(
                       (value) => Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const MyApp())),
                     );
                     break;
-                  case MenuItem.editProfile:
+                  case MenuItems.editProfile:
                     _editProfile();
                     break;
                 }
               },
               itemBuilder: (_) => [
-                    PopupMenuItem<MenuItem>(
-                      value: MenuItem.editProfile,
+                    PopupMenuItem<MenuItems>(
+                      value: MenuItems.editProfile,
                       child: Row(
                         children: const [
                           Icon(Icons.mode_edit_rounded),
@@ -94,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     PopupMenuItem(
-                      value: MenuItem.logout,
+                      value: MenuItems.logout,
                       child: Row(
                         children: const [
                           Icon(Icons.logout_rounded),

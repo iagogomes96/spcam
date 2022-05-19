@@ -49,8 +49,8 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.igsolution.safe_neighborhood"
-        minSdkVersion flutterMinSdkVersion.toInteger()
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 26
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
