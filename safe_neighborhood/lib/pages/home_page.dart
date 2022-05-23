@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:safe_neighborhood/pages/play_camera.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
+import 'dart:io';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   double zoom = 16.0;
 
   late String _mapStyle;
+  late String mapPlatform;
   late BitmapDescriptor onlineIcon;
   late BitmapDescriptor offlineIcon;
   late BitmapDescriptor warningIcon;
@@ -45,20 +47,24 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    rootBundle.loadString('assets/mapstyle.txt').then((string) {
+    if (Platform.isAndroid) {
+      mapPlatform = 'assets/mapstyle.txt';
+    } else if (Platform.isIOS) {
+      mapPlatform = 'assets/mapstyle.txt';
+    }
+    rootBundle.loadString(mapPlatform).then((string) {
       _mapStyle = string;
     });
     markers.removeAll(markers);
     BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(size: Size(64, 64)),
+            const ImageConfiguration(size: Size(32, 32)),
             'assets/images/offline_camera.png')
         .then((onValue) {
       offlineIcon = onValue;
     });
 
     BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(size: Size(64, 64)),
+            const ImageConfiguration(size: Size(32, 32)),
             'assets/images/online_camera.png')
         .then((onValue) {
       onlineIcon = onValue;
@@ -169,6 +175,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         _isMap
                             ? GoogleMap(
+                                mapType: MapType.normal,
                                 onMapCreated: _onMapCreated,
                                 initialCameraPosition: CameraPosition(
                                   target: LatLng(lat, long),

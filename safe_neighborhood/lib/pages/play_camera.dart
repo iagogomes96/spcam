@@ -61,16 +61,20 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+    var appBar = AppBar(
+      title: Text(name),
+      centerTitle: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      titleTextStyle: const TextStyle(
+          color: AppColors.textTitle,
+          fontSize: 20,
+          fontWeight: FontWeight.bold),
+    );
+    var size = MediaQuery.of(context).size;
+    var screenHeight = (size.height - appBar.preferredSize.height) -
+        MediaQuery.of(context).padding.top;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Text(name),
-        titleTextStyle: const TextStyle(
-            color: AppColors.textTitle,
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
+      appBar: appBar,
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => AlertScreen(
@@ -83,92 +87,96 @@ class _CameraPageState extends State<CameraPage> {
           size: 40,
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 2,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                address,
-                style: const TextStyle(
-                    color: AppColors.secondaryText, fontSize: 16),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              VlcPlayer(
-                  controller: _videoPlayerController,
-                  aspectRatio: 1.47,
-                  placeholder: const Center(
-                      child: CircularProgressIndicator(
-                    value: 10,
-                    color: Colors.white,
-                  ))),
-              const SizedBox(height: 10),
-              Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 3,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                        color: AppColors.textTitle,
-                        width: 2,
-                        style: BorderStyle.solid),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Alertas'.toUpperCase(),
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textTitle),
+      body: Column(
+        children: [
+          SizedBox(
+            width: size.width,
+            height: screenHeight / 2,
+            child: Column(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      address,
+                      style: const TextStyle(
+                          color: AppColors.secondaryText, fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    VlcPlayer(
+                        controller: _videoPlayerController,
+                        aspectRatio: 1.47,
+                        placeholder: const Center(
+                            child: CircularProgressIndicator(
+                          value: 10,
+                          color: Colors.white,
+                        ))),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Container(
+                        width: size.width / 3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: AppColors.textTitle,
+                              width: 2,
+                              style: BorderStyle.solid),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Alertas'.toUpperCase(),
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textTitle),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            GestureDetector(
+                                onTap: () =>
+                                    setState(() => showAlert = !showAlert),
+                                child: const Icon(Icons.arrow_drop_down)),
+                          ],
+                        ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      GestureDetector(
-                          onTap: () => setState(() => showAlert = !showAlert),
-                          child: const Icon(Icons.arrow_drop_down)),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
-              showAlert ? alertTile() : Container(),
-            ],
+              ],
+            ),
           ),
-        ),
+          SizedBox(
+            width: size.width,
+            height: screenHeight / 2,
+            child: showAlert ? alertTile() : Container(),
+          ),
+        ],
       ),
     );
   }
 
   Widget alertTile() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height / 2,
-      width: MediaQuery.of(context).size.width,
-      child: StreamBuilder<QuerySnapshot>(
-        stream: _getAuth(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return const LoadingPage();
-            default:
-              if (snapshot.hasError) {
-                return const ErrorPage();
-              } else {
-                return listViewbuilder(context, snapshot);
-              }
-          }
-        },
-      ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: _getAuth(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return const LoadingPage();
+          default:
+            if (snapshot.hasError) {
+              return const ErrorPage();
+            } else {
+              return listViewbuilder(context, snapshot);
+            }
+        }
+      },
     );
   }
 
