@@ -29,6 +29,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  bool isPlaying = false;
   late final VlcPlayerController _videoPlayerController;
   late String url = widget.url;
   late String name = widget.name;
@@ -45,12 +46,25 @@ class _CameraPageState extends State<CameraPage> {
     super.initState();
     _videoPlayerController = VlcPlayerController.network(
       url,
-      hwAcc: HwAcc.auto,
+      hwAcc: HwAcc.full,
+      autoInitialize: true,
       autoPlay: true,
       options: VlcPlayerOptions(
         rtp: VlcRtpOptions(['--rtsp-tcp']),
       ),
     );
+    _videoPlayerController.addListener(() {
+      if (_videoPlayerController.value.isPlaying) {
+        print('status: reproduzindo');
+      }
+      if (_videoPlayerController.value.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Erro ao reproduzir conteúdo. Contate a central')),
+        );
+        print('status: ${_videoPlayerController.value.errorDescription}');
+      }
+    });
   }
 
   @override
@@ -106,32 +120,29 @@ class _CameraPageState extends State<CameraPage> {
                     const SizedBox(
                       height: 10,
                     ),
-                    VlcPlayer(
+                    Container(
+                      color: Colors.black,
+                      child: VlcPlayer(
                         controller: _videoPlayerController,
                         aspectRatio: 1.47,
                         placeholder: const Center(
-                            child: CircularProgressIndicator(
-                          value: 10,
-                          color: Colors.white,
-                        ))),
-                    const SizedBox(height: 10),
-                    Center(
-                      child: Container(
-                        width: size.width / 3,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                              color: AppColors.textTitle,
-                              width: 2,
-                              style: BorderStyle.solid),
+                          child: CircularProgressIndicator(
+                            value: 10,
+                            color: Colors.white,
+                          ),
                         ),
+                      ),
+                    ),
+                    Center(
+                      child: SizedBox(
+                        width: size.width / 3.5,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               'Alertas'.toUpperCase(),
                               style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.textTitle),
                             ),
@@ -139,9 +150,10 @@ class _CameraPageState extends State<CameraPage> {
                               width: 10,
                             ),
                             GestureDetector(
-                                onTap: () =>
-                                    setState(() => showAlert = !showAlert),
-                                child: const Icon(Icons.arrow_drop_down)),
+                              onTap: () =>
+                                  setState(() => showAlert = !showAlert),
+                              child: const Icon(Icons.arrow_drop_down),
+                            ),
                           ],
                         ),
                       ),
@@ -248,52 +260,6 @@ class _CameraPageState extends State<CameraPage> {
         }
         return Container();
       }),
-    );
-  }
-
-  // ignore: unused_element
-  Widget videoController() {
-    bool _isPlaying = true;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton(
-          onPressed: () {},
-          child: const Icon(
-            Icons.fast_rewind,
-            size: 28,
-            color: Colors.white,
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            if (_isPlaying) {
-              setState(() {
-                _isPlaying = false;
-              });
-              _videoPlayerController.pause();
-            } else {
-              setState(() {
-                _isPlaying = true;
-              });
-              _videoPlayerController.play();
-            }
-          },
-          child: Icon(
-            _isPlaying ? Icons.pause : Icons.play_arrow,
-            size: 28,
-            color: Colors.white,
-          ),
-        ),
-        TextButton(
-          onPressed: () {},
-          child: const Icon(
-            Icons.fast_forward,
-            size: 28,
-            color: Colors.white,
-          ),
-        ),
-      ],
     );
   }
 }

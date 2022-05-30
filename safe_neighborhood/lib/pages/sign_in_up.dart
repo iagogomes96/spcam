@@ -132,7 +132,7 @@ class _SignPageState extends State<SignPage> {
               return Stack(
                 children: [
                   listViewbuilder(context, snapshot),
-                  isLogin ? loginBuilder() : registerBuilder(),
+                  Center(child: isLogin ? loginBuilder() : registerBuilder()),
                 ],
               );
           }

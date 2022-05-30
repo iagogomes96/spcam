@@ -9,7 +9,7 @@ import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/theme/app_theme.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
 
-const request = "https://api.jsonbin.io/b/626ff23d38be296761fb3211/1";
+const request = "https://api.npoint.io/67dc7f362a61d92bb6a5";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
