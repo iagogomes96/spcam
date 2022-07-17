@@ -54,15 +54,11 @@ class _CameraPageState extends State<CameraPage> {
       ),
     );
     _videoPlayerController.addListener(() {
-      if (_videoPlayerController.value.isPlaying) {
-        print('status: reproduzindo');
-      }
       if (_videoPlayerController.value.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Erro ao reproduzir conteúdo. Contate a central')),
         );
-        print('status: ${_videoPlayerController.value.errorDescription}');
       }
     });
   }

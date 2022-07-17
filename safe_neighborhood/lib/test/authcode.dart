@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_neighborhood/components/firebase_repository.dart';
@@ -78,9 +77,6 @@ class _AuthCodeState extends State<AuthCode> {
         final DocumentSnapshot doc = snapshot.data!.docs[index];
         if (doc['value']) {
           alertList.add(doc['type']);
-          if (kDebugMode) {
-            print('lista: $alertList');
-          }
           return Card(
             color: Colors.white,
             shape:
@@ -118,7 +114,6 @@ class _AuthCodeState extends State<AuthCode> {
           );
         } else {
           alertList.remove(doc['type']);
-          print(alertList);
         }
         return Container();
       }),
