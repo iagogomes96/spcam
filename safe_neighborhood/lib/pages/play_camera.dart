@@ -90,7 +90,7 @@ class _CameraPageState extends State<CameraPage> {
             builder: (context) => AlertScreen(
                   device: name,
                 ))),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.primary.withOpacity(0.1),
         child: const Icon(
           Icons.warning_amber_rounded,
           color: AppColors.primaryText,

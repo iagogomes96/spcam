@@ -7,7 +7,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:safe_neighborhood/pages/play_camera.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
-import 'dart:io';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -47,11 +46,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid) {
-      mapPlatform = 'assets/mapstyle.txt';
-    } else if (Platform.isIOS) {
-      mapPlatform = 'assets/mapstyle.txt';
-    }
+
+    mapPlatform = 'assets/mapstyle.txt';
+
     rootBundle.loadString(mapPlatform).then((string) {
       _mapStyle = string;
     });
@@ -68,13 +65,6 @@ class _HomePageState extends State<HomePage> {
             'assets/images/online_camera.png')
         .then((onValue) {
       onlineIcon = onValue;
-    });
-
-    BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(size: Size(64, 64)),
-            'assets/images/warning_camera.png')
-        .then((onValue) {
-      warningIcon = onValue;
     });
   }
 

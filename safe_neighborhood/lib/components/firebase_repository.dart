@@ -124,6 +124,14 @@ class FirestoreRepository extends ChangeNotifier {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getCameras() {
+    return db.collection('camera').snapshots();
+  }
+
+  Stream<QuerySnapshot> getCameraInfo(String device) {
+    return db.collection('cameras').doc(device).collection('info').snapshots();
+  }
+
   logoutRequest() {
     user = {};
     allowedDevice = {};
