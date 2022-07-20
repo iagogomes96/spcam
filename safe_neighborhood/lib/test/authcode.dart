@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
@@ -21,10 +24,12 @@ class _mapLoaderState extends State<mapLoader> {
   );
   late GoogleMapController mapController;
   Set<Marker> markers = <Marker>{};
-  double lat = -23.6377555;
-  double long = -46.6820983;
+  double lat = -23.6485085;
+  double long = -46.7005737;
+  GeoPoint loc = const GeoPoint(-23.6485085, -46.7005737);
   double zoom = 16.0;
 
+  late int camLenght;
   late String _mapStyle;
   late String mapPlatform;
   late BitmapDescriptor onlineIcon;
@@ -37,6 +42,18 @@ class _mapLoaderState extends State<mapLoader> {
 
   Stream<QuerySnapshot> _getCameras() {
     return context.read<FirestoreRepository>().getCameras();
+  }
+
+  Stream<QuerySnapshot> _getCameraInfo(String device) {
+    return context.read<FirestoreRepository>().getCameraInfo(device);
+  }
+
+  Future<int> getCameraLenght() async {
+    int cameras = await _getCameras().length;
+    if (kDebugMode) {
+      print('cameras online: $cameras');
+    }
+    return cameras;
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -82,30 +99,19 @@ class _mapLoaderState extends State<mapLoader> {
             if (snapshot.hasError) {
               return const ErrorPage();
             } else {
-              //screateMarkers(context, snapshot);
+              camLenght = snapshot.data!.docs.length;
+              if (kDebugMode) {
+                print('cameras: $camLenght');
+              }
+              getCameraLenght();
               return GoogleMap(
-                initialCameraPosition:
-                    CameraPosition(target: LatLng(lat, long), zoom: 15),
+                initialCameraPosition: CameraPosition(
+                    target: LatLng(loc.latitude, loc.longitude), zoom: 17),
                 onMapCreated: _onMapCreated,
               );
             }
         }
       },
     );
-  }
-
-  void createMarkers(
-      BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
-    int listLength = snapshot.data!.docs.length;
-    int i = 0;
-    if (snapshot.data!.docs.isEmpty) {
-      if (kDebugMode) {
-        print('Não há dados');
-      }
-    } else {
-      if (kDebugMode) {
-        print('Tamanho da lista: $listLength');
-      }
-    }
   }
 }

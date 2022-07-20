@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safe_neighborhood/components/allow_device.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
@@ -81,14 +80,7 @@ class _SignPageState extends State<SignPage> {
     try {
       await context
           .read<AuthService>()
-          .register(email.text, password.text, fullname.text, phone.text)
-          .then(
-            (value) => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const AllowDevice(),
-              ),
-            ),
-          );
+          .register(email.text, password.text, fullname.text, phone.text);
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message)));
