@@ -9,7 +9,6 @@ class FirestoreRepository extends ChangeNotifier {
   late Map<String, dynamic> allowedDevice = {};
   late AuthService auth;
   late Map<String, dynamic> alertBody = {};
-  late int camLenght;
 
   FirestoreRepository({required this.auth}) {
     _readData();
@@ -83,12 +82,6 @@ class FirestoreRepository extends ChangeNotifier {
         .doc(device)
         .collection('alerts')
         .snapshots();
-  }
-
-  Future<int> getCamerasLenght() async {
-    camLenght = await db.collection('cameras').snapshots().length;
-    print('cameras : $camLenght');
-    return camLenght;
   }
 
   Stream<QuerySnapshot> getCameras() {

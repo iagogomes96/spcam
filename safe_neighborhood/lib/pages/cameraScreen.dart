@@ -3,38 +3,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:provider/provider.dart';
-import 'package:safe_neighborhood/pages/alert_page.dart';
 import 'package:safe_neighborhood/theme/app_colors.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
 
 import '../components/firebase_repository.dart';
 
-class CameraPage extends StatefulWidget {
+class ScreenCamera extends StatefulWidget {
   final String url;
   final String name;
-  final String status;
-  final String address;
 
-  const CameraPage(
-      {Key? key,
-      required this.url,
-      required this.name,
-      required this.status,
-      required this.address})
+  const ScreenCamera({Key? key, required this.url, required this.name})
       : super(key: key);
 
   @override
-  State<CameraPage> createState() => _CameraPageState();
+  State<ScreenCamera> createState() => _ScreenCameraState();
 }
 
-class _CameraPageState extends State<CameraPage> {
+class _ScreenCameraState extends State<ScreenCamera> {
   bool isPlaying = false;
   late final VlcPlayerController _videoPlayerController;
   late String url = widget.url;
   late String name = widget.name;
-  late String status = widget.status;
-  late String address = widget.address;
   bool showAlert = false;
   List<String> alertList = [];
   Stream<QuerySnapshot> _getAuth() {
@@ -71,32 +61,9 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    var appBar = AppBar(
-      title: Text(name),
-      centerTitle: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      titleTextStyle: const TextStyle(
-          color: AppColors.textTitle,
-          fontSize: 20,
-          fontWeight: FontWeight.bold),
-    );
     var size = MediaQuery.of(context).size;
-    var screenHeight = (size.height - appBar.preferredSize.height) -
-        MediaQuery.of(context).padding.top;
+    var screenHeight = (size.height) - MediaQuery.of(context).padding.top;
     return Scaffold(
-      appBar: appBar,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AlertScreen(
-                  device: name,
-                ))),
-        backgroundColor: AppColors.primary.withOpacity(0.1),
-        child: const Icon(
-          Icons.warning_amber_rounded,
-          color: AppColors.primaryText,
-          size: 40,
-        ),
-      ),
       body: Column(
         children: [
           SizedBox(
@@ -108,11 +75,6 @@ class _CameraPageState extends State<CameraPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      address,
-                      style: const TextStyle(
-                          color: AppColors.secondaryText, fontSize: 16),
-                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -161,7 +123,7 @@ class _CameraPageState extends State<CameraPage> {
           ),
           SizedBox(
             width: size.width,
-            height: screenHeight / 2,
+            height: screenHeight / 4,
             child: showAlert ? alertTile() : Container(),
           ),
         ],

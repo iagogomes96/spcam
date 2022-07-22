@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/test/authcode.dart';
+import 'package:safe_neighborhood/test/getCameras.dart';
 import 'package:safe_neighborhood/theme/app_theme.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
 
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SP Cam APP',
       theme: AppTheme(context).defaultTheme,
-      home: const /*mapLoader(),*/ AuthCheck(),
+      home: const GetCameras(), //AuthCheck(),
     );
   }
 }
