@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:safe_neighborhood/pages/alert_page.dart';
 import 'package:safe_neighborhood/pages/cameraScreen.dart';
 
 import '../theme/app_colors.dart';
@@ -54,7 +56,7 @@ class _PlayCamerasState extends State<PlayCameras>
           fontWeight: FontWeight.bold),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        color: Colors.black,
+        color: Colors.white,
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [
@@ -62,10 +64,28 @@ class _PlayCamerasState extends State<PlayCameras>
           onPressed: () {
             switch (_tabController.index) {
               case 0:
-                print('camera 1 selecionada');
+                if (kDebugMode) {
+                  print('camera 1 selecionada');
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: ((context) =>
+                        AlertScreen(device: widget.name, camID: "camera 1")),
+                  ),
+                );
                 break;
               case 1:
-                print('camera 2 selecionada');
+                if (kDebugMode) {
+                  print('camera 2 selecionada');
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: ((context) =>
+                        AlertScreen(device: widget.name, camID: "camera 2")),
+                  ),
+                );
                 break;
               default:
                 break;
@@ -76,7 +96,6 @@ class _PlayCamerasState extends State<PlayCameras>
             size: 28,
             color: Colors.amber,
           ),
-          color: Colors.black,
         ),
       ],
       bottom: TabBar(controller: _tabController, tabs: const [
@@ -105,8 +124,16 @@ class _PlayCamerasState extends State<PlayCameras>
         controller: _tabController,
         children: [
           //show camera 1
-          ScreenCamera(url: widget.url1, name: widget.name), //show camera 2
-          ScreenCamera(url: widget.url2, name: widget.name),
+          ScreenCamera(
+            url: widget.url1,
+            name: widget.name,
+            screenheight: screenHeight,
+          ), //show camera 2
+          ScreenCamera(
+            url: widget.url2,
+            name: widget.name,
+            screenheight: screenHeight,
+          ),
         ],
       ),
     );

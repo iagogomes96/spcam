@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SP Cam APP',
       theme: AppTheme(context).defaultTheme,
-      home: const GetCameras(), //AuthCheck(),
+      home: const AuthCheck(),
     );
   }
 }

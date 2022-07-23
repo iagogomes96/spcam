@@ -49,14 +49,15 @@ class FirestoreRepository extends ChangeNotifier {
     }
   }
 
-  createAlert(
-      String description, String type, String device, bool anonymous) async {
+  createAlert(String description, String type, String device, bool anonymous,
+      String camID) async {
     if (anonymous) {
       alertBody = {
         'user': 'Usuário anônimo',
         'description': description,
         'type': type,
         'device': device,
+        'camid': camID,
         'value': true
       };
     } else {
@@ -65,6 +66,7 @@ class FirestoreRepository extends ChangeNotifier {
         'description': description,
         'type': type,
         'device': device,
+        'camid': camID,
         'value': true
       };
     }

@@ -12,8 +12,13 @@ import '../components/firebase_repository.dart';
 class ScreenCamera extends StatefulWidget {
   final String url;
   final String name;
+  final double screenheight;
 
-  const ScreenCamera({Key? key, required this.url, required this.name})
+  const ScreenCamera(
+      {Key? key,
+      required this.url,
+      required this.name,
+      required this.screenheight})
       : super(key: key);
 
   @override
@@ -62,7 +67,8 @@ class _ScreenCameraState extends State<ScreenCamera> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var screenHeight = (size.height) - MediaQuery.of(context).padding.top;
+    var screenHeight = widget
+        .screenheight; //(size.height) - MediaQuery.of(context).padding.top;
     return Scaffold(
       body: Column(
         children: [
@@ -123,7 +129,7 @@ class _ScreenCameraState extends State<ScreenCamera> {
           ),
           SizedBox(
             width: size.width,
-            height: screenHeight / 4,
+            height: screenHeight / 2,
             child: showAlert ? alertTile() : Container(),
           ),
         ],

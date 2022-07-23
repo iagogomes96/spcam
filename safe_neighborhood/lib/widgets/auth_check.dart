@@ -3,6 +3,7 @@ import 'package:safe_neighborhood/components/get_started.dart';
 import 'package:safe_neighborhood/pages/home_page.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:safe_neighborhood/test/getCameras.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
 
 class AuthCheck extends StatefulWidget {
@@ -21,7 +22,7 @@ class _AuthCheckState extends State<AuthCheck> {
     } else if (auth.usuario == null) {
       return const GetStarted();
     } else {
-      return const HomePage();
+      return const GetCameras();
     }
   }
 }

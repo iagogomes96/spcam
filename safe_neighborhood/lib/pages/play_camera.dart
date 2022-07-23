@@ -89,6 +89,7 @@ class _CameraPageState extends State<CameraPage> {
         onPressed: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => AlertScreen(
                   device: name,
+                  camID: 'cam1',
                 ))),
         backgroundColor: AppColors.primary.withOpacity(0.1),
         child: const Icon(

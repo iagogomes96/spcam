@@ -7,7 +7,9 @@ import 'package:safe_neighborhood/theme/app_colors.dart';
 
 class AlertScreen extends StatefulWidget {
   final String device;
-  const AlertScreen({Key? key, required this.device}) : super(key: key);
+  final String camID;
+  const AlertScreen({Key? key, required this.device, required this.camID})
+      : super(key: key);
 
   @override
   State<AlertScreen> createState() => _AlertScreenState();
@@ -31,9 +33,8 @@ class _AlertScreenState extends State<AlertScreen> {
 
   Future<bool> createAlert() async {
     try {
-      await context
-          .read<FirestoreRepository>()
-          .createAlert(description.text, selectedItem!, widget.device, value);
+      await context.read<FirestoreRepository>().createAlert(
+          description.text, selectedItem!, widget.device, value, widget.camID);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Alerta enviado')));
     } on Exception catch (e) {
