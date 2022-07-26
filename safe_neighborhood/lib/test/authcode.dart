@@ -8,14 +8,14 @@ import 'package:safe_neighborhood/components/firebase_repository.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
 
-class mapLoader extends StatefulWidget {
-  const mapLoader({Key? key}) : super(key: key);
+class MapLoader extends StatefulWidget {
+  const MapLoader({Key? key}) : super(key: key);
 
   @override
-  State<mapLoader> createState() => _mapLoaderState();
+  State<MapLoader> createState() => _MapLoaderState();
 }
 
-class _mapLoaderState extends State<mapLoader> {
+class _MapLoaderState extends State<MapLoader> {
   final pageController = PageController(
     initialPage: 0,
   );
@@ -31,7 +31,6 @@ class _mapLoaderState extends State<mapLoader> {
   late BitmapDescriptor offlineIcon;
   late BitmapDescriptor warningIcon;
   late BitmapDescriptor iconstatus;
-  bool _isMap = true;
   late String filterText = '';
   late Map<dynamic, dynamic> mapData = {};
 
@@ -97,7 +96,6 @@ class _mapLoaderState extends State<mapLoader> {
   void createMarkers(
       BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     int listLength = snapshot.data!.docs.length;
-    int i = 0;
     if (snapshot.data!.docs.isEmpty) {
       if (kDebugMode) {
         print('Não há dados');

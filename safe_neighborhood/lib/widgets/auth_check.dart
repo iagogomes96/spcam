@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:safe_neighborhood/components/get_started.dart';
-import 'package:safe_neighborhood/pages/home_page.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_neighborhood/test/getCameras.dart';
