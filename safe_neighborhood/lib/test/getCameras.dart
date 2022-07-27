@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:safe_neighborhood/data/geolocation.dart';
 import 'package:safe_neighborhood/test/playCameras.dart';
 import 'package:safe_neighborhood/widgets/loading_error_page.dart';
 import 'package:safe_neighborhood/widgets/loading_page.dart';
@@ -25,7 +27,7 @@ class _GetCamerasState extends State<GetCameras> {
   );
 
   Set<Marker> marcador = {};
-  late Map<String, dynamic> camList;
+  late Map<String, dynamic> camList = {};
   late List<Map<String, dynamic>> markers = [];
   late GoogleMapController mapController;
   late String _mapStyle;
@@ -36,31 +38,38 @@ class _GetCamerasState extends State<GetCameras> {
   late BitmapDescriptor iconstatus;
   bool _isMap = true;
 
-  String url = "https://api.npoint.io/a083fc7a7e4bcda817d9";
+  //String url = "https://api.npoint.io/a083fc7a7e4bcda817d9";
+  String url = "https://api.jsonbin.io/v3/b/62e16843248d43754f079bec";
 
   Future<Map<String, dynamic>> _getCameras() async {
-    try {
-      http.Response response = await http.get(Uri.parse(url));
-      camList = json.decode(response.body);
+    if (camList.isEmpty) {
+      try {
+        http.Response response = await http.get(Uri.parse(url));
+        camList = json.decode(response.body);
+        return camList;
+      } catch (e) {
+        SnackBar(content: Text('Error: $e'));
+        return camList = {};
+      }
+    } else {
       return camList;
-    } catch (e) {
-      SnackBar(content: Text('Error: $e'));
-      return camList = {};
     }
   }
 
   void _addData() {
-    for (int i = 1; i <= camList['cameras'].length; i++) {
+    for (int i = 1; i <= camList['record']['cameras'].length; i++) {
       markers.add({
-        "address": camList['cameras'][i.toString()]['info']['address'],
-        "camid": camList['cameras'][i.toString()]['info']['camid'],
-        "position": camList['cameras'][i.toString()]['info']['position'],
-        "source": camList['cameras'][i.toString()]['info']['source'],
-        "status": camList['cameras'][i.toString()]['info']['status'],
-        "title": camList['cameras'][i.toString()]['info']['title'],
-        'url': camList['cameras'][i.toString()]['info']['url']
+        "address": camList['record']['cameras'][i.toString()]['info']
+            ['address'],
+        "camid": camList['record']['cameras'][i.toString()]['info']['camid'],
+        "position": camList['record']['cameras'][i.toString()]['info']
+            ['position'],
+        "source": camList['record']['cameras'][i.toString()]['info']['source'],
+        "status": camList['record']['cameras'][i.toString()]['info']['status'],
+        "title": camList['record']['cameras'][i.toString()]['info']['title'],
+        'url': camList['record']['cameras'][i.toString()]['info']['url']
       });
-      if (camList['cameras'][i.toString()]['info']['status']) {
+      if (camList['record']['cameras'][i.toString()]['info']['status']) {
         final Marker marker = Marker(
           markerId: MarkerId(i.toString()),
           position: LatLng(
@@ -104,9 +113,10 @@ class _GetCamerasState extends State<GetCameras> {
     }
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     mapController.setMapStyle(_mapStyle);
+    await context.watch<GeolocatorController>().getPosition();
   }
 
   @override
@@ -135,6 +145,37 @@ class _GetCamerasState extends State<GetCameras> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        title: const Text('Totens'),
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          color: Colors.white,
+          onPressed: () {
+            setState(() {
+              _isMap = !_isMap;
+            });
+          },
+          icon: !_isMap
+              ? const Icon(Icons.map_rounded)
+              : const Icon(Icons.list_rounded),
+          iconSize: 32,
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_sharp),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
+            iconSize: 32,
+            color: Colors.white,
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -151,12 +192,14 @@ class _GetCamerasState extends State<GetCameras> {
                     } else {
                       _addData();
 
-                      return _isMap ? mapCameras() : listCameras();
+                      return _isMap
+                          ? /*mapCameras()*/ getMapCameras()
+                          : listCameras();
                     }
                 }
               }),
             ),
-            topMenu(),
+            //topMenu(),
           ],
         ),
       ),
@@ -175,23 +218,45 @@ class _GetCamerasState extends State<GetCameras> {
     );
   }
 
+  Widget getMapCameras() {
+    return ChangeNotifierProvider<GeolocatorController>(
+      create: (_) => GeolocatorController(),
+      child: Builder(builder: (context) {
+        final local = context.watch<GeolocatorController>();
+
+        return GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(local.lat, local.long),
+            zoom: 18,
+          ),
+          zoomControlsEnabled: true,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: true,
+          onMapCreated: local.onMapCreated,
+          markers: marcador,
+        );
+      }),
+    );
+  }
+
   Widget listCameras() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
+      padding: const EdgeInsets.all(10),
       child: ListView.builder(
           padding: const EdgeInsets.all(10),
           itemCount: marcador.length,
           itemBuilder: (context, index) {
             late String icon;
             final int i = (index + 1);
-            if (camList['cameras'][i.toString()]['info']['status']) {
+            if (camList['record']['cameras'][i.toString()]['info']['status']) {
               icon = 'assets/images/online_camera.png';
             } else {
               icon = 'assets/images/offline_camera.png';
             }
             return InkWell(
               onTap: () {
-                if (camList['cameras'][i.toString()]['info']['status']) {
+                if (camList['record']['cameras'][i.toString()]['info']
+                    ['status']) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(

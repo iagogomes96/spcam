@@ -54,30 +54,27 @@ class _AllowPermissionsState extends State<AllowPermissions> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 100),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                'Acesso aos dados do aparelho',
+                'Acesso a localização do aparelho',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: AppColors.textTitle,
                     fontSize: 25,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 50,
-              ),
               Image(
-                image: AssetImage('assets/images/device_info.png'),
-              ),
-              SizedBox(
-                height: 50,
+                image: AssetImage('assets/images/place.png'),
               ),
               Text(
-                'A utilização do App só é possível através da autenticação do dispositivo. Permita o acesso para poder utiliza-lo.',
+                'A boa utilização do app depende da sua localização. Permita o acesso para poder utiliza-lo.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.textSubTitle, fontSize: 16),
-              )
+              ),
+              SizedBox(
+                height: 50,
+              ),
             ],
           ),
         ),

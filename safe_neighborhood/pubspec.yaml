@@ -51,13 +51,13 @@ dependencies:
   transparent_image: ^2.0.0
   url_launcher: ^6.0.20
   flutter_launcher_icons: ^0.9.2
-
+  geolocator: ^7.4.0
 flutter_native_splash:
   color: "#ffffff"
-  image: assets/app/icon.png
-  color_dark: "#ffffff"
-  image_dark: assets/app/splash.png
-  icon_background_color_dark: "#ffffff"
+  image: assets/app/icon_transparent.png
+  color_dark: "#15193a"
+  image_dark: assets/app/icon_transparent.png
+  icon_background_color_dark: "#15193a"
   android: true
   ios: true
   web: false

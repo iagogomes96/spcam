@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:safe_neighborhood/components/firebase_repository.dart';
+import 'package:safe_neighborhood/data/geolocation.dart';
 import 'package:safe_neighborhood/services/auth_service.dart';
 import 'package:safe_neighborhood/theme/app_theme.dart';
 import 'package:safe_neighborhood/widgets/auth_check.dart';
@@ -22,6 +23,7 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) =>
                 FirestoreRepository(auth: context.read<AuthService>())),
+        ChangeNotifierProvider(create: (context) => GeolocatorController())
       ],
       child: const MyApp(),
     ),
