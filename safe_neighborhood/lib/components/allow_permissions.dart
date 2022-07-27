@@ -14,8 +14,8 @@ class AllowPermissions extends StatefulWidget {
 class _AllowPermissionsState extends State<AllowPermissions> {
   bool permissions = false;
   Future<void> checkPermissions() async {
-    var phoneStatus = await Permission.phone.status;
-    if (phoneStatus.isGranted) {
+    var locationStatus = await Permission.locationWhenInUse.status;
+    if (locationStatus.isGranted) {
       setState(() {
         permissions = true;
       });
@@ -90,7 +90,7 @@ class _AllowPermissionsState extends State<AllowPermissions> {
               ElevatedButton(
                 onPressed: () async {
                   setState(() {
-                    PermissionRequest().check_phone_permissions().then(
+                    PermissionRequest().check_location_permissions().then(
                           (value) => Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => const SignPage(),

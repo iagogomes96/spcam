@@ -171,6 +171,7 @@ class _GetCamerasState extends State<GetCameras> {
       onMapCreated: _onMapCreated,
       initialCameraPosition: CameraPosition(target: positionCamera, zoom: 16),
       markers: marcador,
+      myLocationEnabled: true,
     );
   }
 
