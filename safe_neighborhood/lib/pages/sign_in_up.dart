@@ -198,21 +198,11 @@ class _SignPageState extends State<SignPage> {
                       ),
                     ),
                   );
-                } else if (whitelist.contains(email.text)) {
+                } else {
                   context.read<AuthService>().recoveryPass(email.text);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('E-mail de recuperação enviado.'),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.redAccent,
-                      content: Text(
-                        'Insira um e-mail válido',
-                        style: TextStyle(color: Colors.white),
-                      ),
                     ),
                   );
                 }
