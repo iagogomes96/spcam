@@ -1,4 +1,4 @@
-package com.igsolution.safe_neighborhood
+package br.com.gruporealprotecao.spcamapp
 
 import io.flutter.embedding.android.FlutterActivity
 

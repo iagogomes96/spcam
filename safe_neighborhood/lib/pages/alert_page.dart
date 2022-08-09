@@ -28,6 +28,7 @@ class _AlertScreenState extends State<AlertScreen> {
     'Acidente',
     'Evento natural/ambiental',
     'Problemas de iluminação',
+    'Problemas na câmera',
     'Outros',
   ];
 

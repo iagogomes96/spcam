@@ -207,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 labelText: 'telefone',
                 labelStyle: const TextStyle(
                     color: AppColors.textTitle, fontWeight: FontWeight.bold),
-                hintText: _user['telefone'],
+                hintText: _user['telefone'].toString(),
                 hintStyle: const TextStyle(color: AppColors.textSubTitle),
               ),
               controller: _phonecontroller,

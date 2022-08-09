@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "425992498967",
-    "project_id": "sfnh-7cb96",
-    "storage_bucket": "sfnh-7cb96.appspot.com"
+    "project_number": "377139293130",
+    "project_id": "spcamapp",
+    "storage_bucket": "spcamapp.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:425992498967:android:fd08dd88bce5fcdaacd152",
+        "mobilesdk_app_id": "1:377139293130:android:cef28af0e1266060e4fd33",
         "android_client_info": {
-          "package_name": "com.igsolution.safe_neighborhood"
+          "package_name": "br.com.gruporealprotecao.spcamapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "425992498967-pohvn0j3mfrc8oo0m8qdu1f74q8ushl4.apps.googleusercontent.com",
+          "client_id": "377139293130-8k7t7qgnu8lqjeb1hev0a8evvpp8vq4l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.gruporealprotecao.spcamapp",
+            "certificate_hash": "d44ef0be71bcc68ee317c44c0716c66d9ae58e31"
+          }
+        },
+        {
+          "client_id": "377139293130-34a5k5vmrs08igtvr5fdebkbmgaqsmsa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCeEsb6TPRVnsSpOQONPILuppG2yHj8ekQ"
+          "current_key": "AIzaSyAw69DG6AbwjXe-Y5cg41OegQPiARCc5ng"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "425992498967-pohvn0j3mfrc8oo0m8qdu1f74q8ushl4.apps.googleusercontent.com",
+              "client_id": "377139293130-34a5k5vmrs08igtvr5fdebkbmgaqsmsa.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
