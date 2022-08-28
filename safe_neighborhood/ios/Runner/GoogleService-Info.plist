@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>425992498967-e0h3gchgjlf4u5thphmc2a986nv5uhd3.apps.googleusercontent.com</string>
+	<string>377139293130-0pbsi0mga6ar56sdthn9i5co85r9obap.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.425992498967-e0h3gchgjlf4u5thphmc2a986nv5uhd3</string>
+	<string>com.googleusercontent.apps.377139293130-0pbsi0mga6ar56sdthn9i5co85r9obap</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>377139293130-cm47q2relrp8j8im3uq1qnvga7lic6ka.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyA1WSG55Ffu90Z_WHhvcSC4O8MeDt8eOXw</string>
+	<string>AIzaSyCh_M5qKzfTKCy5TEmQJ-T2tWwL6Nk0jHU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>425992498967</string>
+	<string>377139293130</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.igsolution.safeNeighborhood</string>
+	<string>br.com.gruporealprotecao.spcamapp</string>
 	<key>PROJECT_ID</key>
-	<string>sfnh-7cb96</string>
+	<string>spcamapp</string>
 	<key>STORAGE_BUCKET</key>
-	<string>sfnh-7cb96.appspot.com</string>
+	<string>spcamapp.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:425992498967:ios:d10f46b09e865988acd152</string>
-	<key>DATABASE_URL</key>
-	<string>https://sfnh-7cb96-default-rtdb.firebaseio.com</string>
+	<string>1:377139293130:ios:012d865d0d473782e4fd33</string>
 </dict>
 </plist>
