@@ -83,9 +83,6 @@ class _ScreenCameraState extends State<ScreenCamera> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
                     Container(
                       color: Colors.black,
                       child: VlcPlayer(
@@ -99,31 +96,6 @@ class _ScreenCameraState extends State<ScreenCamera> {
                         ),
                       ),
                     ),
-                    Center(
-                      child: SizedBox(
-                        width: size.width / 3.5,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Alertas'.toUpperCase(),
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textTitle),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            GestureDetector(
-                              onTap: () =>
-                                  setState(() => showAlert = !showAlert),
-                              child: const Icon(Icons.arrow_drop_down),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ],
@@ -132,7 +104,7 @@ class _ScreenCameraState extends State<ScreenCamera> {
           SizedBox(
             width: size.width,
             height: screenHeight / 2,
-            child: showAlert ? alertTile() : Container(),
+            child: alertTile(),
           ),
         ],
       ),

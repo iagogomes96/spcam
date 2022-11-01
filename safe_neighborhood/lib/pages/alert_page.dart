@@ -23,8 +23,6 @@ class _AlertScreenState extends State<AlertScreen> {
   String? selectedItem = 'Tipo de alerta';
   List<String> items = [
     'Tipo de alerta',
-    'Assalto',
-    'Atividade suspeita',
     'Acidente',
     'Evento natural/ambiental',
     'Problemas de iluminação',

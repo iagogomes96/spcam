@@ -68,7 +68,7 @@ class _AllowPermissionsState extends State<AllowPermissions> {
                 image: AssetImage('assets/images/place.png'),
               ),
               Text(
-                'A boa utilização do app depende da sua localização. Permita o acesso para poder utiliza-lo.',
+                'O acesso à sua localização é destinado ao uso do mapa no aplicativo. Estas informações não são armazenadas em nossos servidores e são apenas para o bom funcionamento da aplicação.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.textSubTitle, fontSize: 16),
               ),
